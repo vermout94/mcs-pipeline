@@ -1,0 +1,26 @@
+# Build output
+target/
+build/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# OS and IDE
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# Secrets and key material (signing is keyless)
+.env
+*.pem
+*.key
+*.p12
+*.jks
+*kubeconfig*

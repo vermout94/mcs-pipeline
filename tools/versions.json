@@ -20,10 +20,10 @@
     "note": "Local Maven repository filled by the seed workflow on main and saved with actions/cache, with cache_name as the cache key. Measurement runs restore it and stop if the content hash differs from content_sha256. A new seed run needs a new cache_name.",
     "path": "~/.m2/repository",
     "cache_name": "mcs-m2-petclinic-500158f-1",
-    "content_sha256": null,
-    "files": null,
-    "bytes": null,
-    "seed_run_id": null,
+    "content_sha256": "50cff19ee89c7fc520aa9047f24ea44853153515d78d8bfde757bdeb1cf99ab3",
+    "files": 2174,
+    "bytes": 209659639,
+    "seed_run_id": 38638400713,
     "hash_rule": "tools/m2hash.py"
   },
   "tools": {
@@ -96,8 +96,8 @@
       "mirror": {
         "name": "ghcr.io/vermout94/mcs-pipeline/base/eclipse-temurin",
         "tag": "25.0.4.1_1-jre-noble",
-        "digest": null,
-        "mirror_run_id": null,
+        "digest": "sha256:d9a39a23634650173f1e2bbc176227af9728587ecf0f4b62d53e9355cd7a19ab",
+        "mirror_run_id": 38638230439,
         "note": "Copied once by digest with crane (workflow mirror-base-image). The digest after the copy must equal index_digest. Measurement runs pull name@digest."
       }
     },

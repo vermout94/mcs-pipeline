@@ -1,0 +1,161 @@
+# Fills an empty local Maven repository online with the Maven commands of the
+# stages build and test, checks that the same commands then run offline without
+# changing it, and saves it with actions/cache under the key from
+# tools/versions.json. The content hash goes into tools/versions.json and into
+# every run manifest. A cache key is never reused.
+name: seed-maven-repository
+run-name: seed Maven repository
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: mcs-seed
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  seed:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Check branch
+        run: |
+          if [[ $GITHUB_REF != refs/heads/main ]]; then
+            echo "::error::Run on main. Measurement runs on main restore caches saved on main."
+            exit 1
+          fi
+          mkdir -p "$RUNNER_TEMP/seed"
+          echo "SEED_OUT=$RUNNER_TEMP/seed" >>"$GITHUB_ENV"
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read pins
+        id: pins
+        run: |
+          key=$(jq -er '.maven_repository.cache_name' tools/versions.json)
+          echo "key=$key" >>"$GITHUB_OUTPUT"
+
+      - name: Look up the cache key
+        id: lookup
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.m2/repository
+          key: ${{ steps.pins.outputs.key }}
+          lookup-only: true
+
+      - name: Stop if the key exists
+        if: steps.lookup.outputs.cache-hit == 'true'
+        run: |
+          echo "::error::A cache with this key exists. Set a new maven_repository.cache_name in tools/versions.json."
+          exit 1
+
+      - name: Check the starting state
+        run: |
+          if [[ -e ~/.m2/repository || -e ~/.m2/settings.xml ]]; then
+            echo "::error::~/.m2/repository or ~/.m2/settings.xml exists before the seed run."
+            exit 1
+          fi
+
+      - name: Install JDK and Maven distribution
+        run: |
+          tools/install.sh jdk "$RUNNER_TEMP/jdk"
+          echo "JAVA_HOME=$RUNNER_TEMP/jdk" >>"$GITHUB_ENV"
+          echo "$RUNNER_TEMP/jdk/bin" >>"$GITHUB_PATH"
+          tools/install.sh maven
+
+      - name: Online build and test
+        working-directory: app
+        run: |
+          # run_logged <log> <command...>: output to the job log and to <log>,
+          # workflow commands in the output disabled.
+          run_logged() {
+            local log=$1 token status=0
+            shift
+            token=$(openssl rand -hex 16)
+            echo "::stop-commands::$token"
+            "$@" 2>&1 | tee "$log" || status=$?
+            echo "::$token::"
+            return "$status"
+          }
+          run_logged "$SEED_OUT/online-build.log" env -u ACTIONS_ID_TOKEN_REQUEST_TOKEN -u ACTIONS_ID_TOKEN_REQUEST_URL \
+            ./mvnw -B -DskipTests -Dcyclonedx.skip=true package
+          run_logged "$SEED_OUT/online-test.log" env -u ACTIONS_ID_TOKEN_REQUEST_TOKEN -u ACTIONS_ID_TOKEN_REQUEST_URL \
+            ./mvnw -B -Dcyclonedx.skip=true -Dspring-javaformat.validate.skip=true -Dcheckstyle.skip=true '-Dtest=!MySqlIntegrationTests,!PostgresIntegrationTests' test
+
+      - name: Hash after the online run
+        run: python3 -I -S tools/m2hash.py ~/.m2/repository --out "$SEED_OUT/online.json"
+
+      - name: Offline build and test
+        working-directory: app
+        run: |
+          run_logged() {
+            local log=$1 token status=0
+            shift
+            token=$(openssl rand -hex 16)
+            echo "::stop-commands::$token"
+            "$@" 2>&1 | tee "$log" || status=$?
+            echo "::$token::"
+            return "$status"
+          }
+          rm -rf target
+          run_logged "$SEED_OUT/offline-build.log" env -u ACTIONS_ID_TOKEN_REQUEST_TOKEN -u ACTIONS_ID_TOKEN_REQUEST_URL \
+            ./mvnw -B -o -DskipTests -Dcyclonedx.skip=true package
+          run_logged "$SEED_OUT/offline-test.log" env -u ACTIONS_ID_TOKEN_REQUEST_TOKEN -u ACTIONS_ID_TOKEN_REQUEST_URL \
+            ./mvnw -B -o -Dcyclonedx.skip=true -Dspring-javaformat.validate.skip=true -Dcheckstyle.skip=true '-Dtest=!MySqlIntegrationTests,!PostgresIntegrationTests' test
+
+      - name: Check the offline run
+        run: |
+          python3 -I -S tools/m2hash.py ~/.m2/repository --out "$SEED_OUT/offline.json"
+          online=$(jq -er '.content_sha256' "$SEED_OUT/online.json")
+          offline=$(jq -er '.content_sha256' "$SEED_OUT/offline.json")
+          if [[ $online != "$offline" ]]; then
+            echo "::error::The offline run changed the repository ($online, then $offline)."
+            exit 1
+          fi
+          pattern='^\[INFO\] Download(ing|ed) from '
+          if grep -Eq "$pattern" "$SEED_OUT/offline-build.log" "$SEED_OUT/offline-test.log"; then
+            echo "::error::The offline run downloaded artifacts."
+            exit 1
+          fi
+
+      - name: Save the repository
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.m2/repository
+          key: ${{ steps.pins.outputs.key }}
+
+      - name: Summary
+        env:
+          KEY: ${{ steps.pins.outputs.key }}
+        run: |
+          pattern='^\[INFO\] Downloaded from '
+          downloads=$(cat "$SEED_OUT/online-build.log" "$SEED_OUT/online-test.log" | grep -Ec "$pattern" || true)
+          jq --arg key "$KEY" --arg run "$GITHUB_RUN_ID" --argjson downloads "$downloads" \
+            '{cache_name: $key, content_sha256, files, bytes, seed_run_id: ($run | tonumber), online_downloads: $downloads}' \
+            "$SEED_OUT/offline.json" | tee "$SEED_OUT/seed.json"
+          {
+            echo "## Maven repository snapshot"
+            echo
+            echo "| Field | Value |"
+            echo "|---|---|"
+            jq -r 'to_entries[] | "| \(.key) | `\(.value)` |"' "$SEED_OUT/seed.json"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Upload logs
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: seed-maven-repository-${{ github.run_id }}
+          path: ${{ runner.temp }}/seed
+          if-no-files-found: error
+          retention-days: 90

@@ -1,0 +1,3 @@
+# The build context is app/target. Only the application JAR goes into it.
+*
+!spring-petclinic-4.0.0-SNAPSHOT.jar

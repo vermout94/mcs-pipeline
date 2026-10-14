@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "platform": "linux/amd64",
+  "jdk": {
+    "name": "temurin",
+    "version": "25.0.4.1+1",
+    "url": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.4.1%2B1/OpenJDK25U-jdk_x64_linux_hotspot_25.0.4.1_1.tar.gz",
+    "sha256": "dbb698396d478e7fa2b1e50f4103324b2a99b90569ee27c33f2261f9215cf41e",
+    "checksum_source": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.4.1%2B1/OpenJDK25U-jdk_x64_linux_hotspot_25.0.4.1_1.tar.gz.sha256.txt"
+  },
+  "maven": {
+    "version": "3.9.16",
+    "wrapper_version": "3.3.4",
+    "url": "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-bin.zip",
+    "sha256": "5af3b743dd8b876b5c45da33b676251e5f1687712644abb4ee519ca56e1d89ce",
+    "checksum_source": "SHA-256 computed after checking the published SHA-512 (url + .sha512)",
+    "sha512": "ed41650d42485cfc243fad22158caf9cbb5dc408ce7a09ddb94dd42a019de929ca43065bfa450612cf12bf78b5cafa3884b96c090de326ff590448c933454af3"
+  },
+  "maven_repository": {
+    "note": "Local Maven repository filled by the seed workflow on main and saved with actions/cache, with cache_name as the cache key. Measurement runs restore it and stop if the content hash differs from content_sha256. A new seed run needs a new cache_name.",
+    "path": "~/.m2/repository",
+    "cache_name": "mcs-m2-petclinic-500158f-1",
+    "content_sha256": null,
+    "files": null,
+    "bytes": null,
+    "seed_run_id": null,
+    "hash_rule": "tools/m2hash.py"
+  },
+  "tools": {
+    "cosign": {
+      "version": "v3.1.3",
+      "url": "https://github.com/sigstore/cosign/releases/download/v3.1.3/cosign-linux-amd64",
+      "sha256": "4629c757b7618056f8ddd7e2625ae9fdd94c0372a65049520bc7d9df9efc7f71",
+      "checksum_source": "https://github.com/sigstore/cosign/releases/download/v3.1.3/cosign_checksums.txt"
+    },
+    "syft": {
+      "version": "v1.54.1",
+      "url": "https://github.com/anchore/syft/releases/download/v1.54.1/syft_1.54.1_linux_amd64.tar.gz",
+      "sha256": "c069905b391cc4c20a5ba65ad5c10be2a7ba074f8ea6ad203e24d14e303dad47",
+      "checksum_source": "https://github.com/anchore/syft/releases/download/v1.54.1/syft_1.54.1_checksums.txt"
+    },
+    "grype": {
+      "version": "v0.120.1",
+      "url": "https://github.com/anchore/grype/releases/download/v0.120.1/grype_0.120.1_linux_amd64.tar.gz",
+      "sha256": "0a9ee97ef5ae2ee953b0a80098105052e846cdbe319a57d808b519c33cd1343d",
+      "checksum_source": "https://github.com/anchore/grype/releases/download/v0.120.1/grype_0.120.1_checksums.txt"
+    },
+    "opa": {
+      "version": "v1.21.1",
+      "url": "https://github.com/open-policy-agent/opa/releases/download/v1.21.1/opa_linux_amd64_static",
+      "sha256": "668506eb17a2eaa1fce6cc0d1f42ef85125d4ac5bda5fc74d1152d0c77145031",
+      "checksum_source": "https://github.com/open-policy-agent/opa/releases/download/v1.21.1/opa_linux_amd64_static.sha256"
+    },
+    "conftest": {
+      "version": "v0.71.1",
+      "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.71.1/conftest_0.71.1_Linux_x86_64.tar.gz",
+      "sha256": "c3f6b2a753bd56e377a1e51a95ae3e057f926f2e9139f7d5b5dfbbaf810f7985",
+      "checksum_source": "https://github.com/open-policy-agent/conftest/releases/download/v0.71.1/checksums.txt"
+    }
+  },
+  "support_tools": {
+    "note": "Used outside the measurement job: crane copies the base image to the GHCR mirror.",
+    "crane": {
+      "version": "v0.22.1",
+      "url": "https://github.com/google/go-containerregistry/releases/download/v0.22.1/go-containerregistry_Linux_x86_64.tar.gz",
+      "sha256": "0ab7a1d6932a213aed964ce97666c3077fe691c8606413674a8b3e0b9ec4cda0",
+      "checksum_source": "https://github.com/google/go-containerregistry/releases/download/v0.22.1/checksums.txt"
+    }
+  },
+  "dev_tools": {
+    "note": "Local checks before a commit, not used in workflows.",
+    "actionlint": {
+      "version": "v1.7.12",
+      "darwin_amd64": {
+        "url": "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_darwin_amd64.tar.gz",
+        "sha256": "5b44c3bc2255115c9b69e30efc0fecdf498fdb63c5d58e17084fd5f16324c644"
+      },
+      "linux_amd64": {
+        "url": "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz",
+        "sha256": "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8"
+      },
+      "checksum_source": "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_checksums.txt"
+    }
+  },
+  "grype_db": {
+    "note": "Pinned database snapshot, filled in with factor A (Prompt 10).",
+    "url": null,
+    "sha256": null,
+    "built": null
+  },
+  "images": {
+    "base": {
+      "source": "docker.io/library/eclipse-temurin:25.0.4.1_1-jre-noble",
+      "index_digest": "sha256:d9a39a23634650173f1e2bbc176227af9728587ecf0f4b62d53e9355cd7a19ab",
+      "linux_amd64_digest": "sha256:78498f30dd330b06755c1b134039dcbf8324bedb385136819dd519b842a3816a",
+      "mirror": {
+        "name": "ghcr.io/vermout94/mcs-pipeline/base/eclipse-temurin",
+        "tag": "25.0.4.1_1-jre-noble",
+        "digest": null,
+        "mirror_run_id": null,
+        "note": "Copied once by digest with crane (workflow mirror-base-image). The digest after the copy must equal index_digest. Measurement runs pull name@digest."
+      }
+    },
+    "app": {
+      "name": "ghcr.io/vermout94/mcs-pipeline/petclinic",
+      "note": "Built and pushed by every measurement run, tagged with the correlation ID."
+    }
+  },
+  "actions": {
+    "note": "Workflows cannot read this file for uses:. The SHAs are written into the workflows with the version as a comment, and tools/check_workflows.py compares both. actions/cache/restore and actions/cache/save are part of actions/cache and use its SHA.",
+    "actions/checkout": {
+      "version": "v7.0.1",
+      "sha": "3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    "actions/upload-artifact": {
+      "version": "v7.0.2",
+      "sha": "cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    "actions/cache": {
+      "version": "v6.1.0",
+      "sha": "55cc8345863c7cc4c66a329aec7e433d2d1c52a9"
+    },
+    "actions/attest": {
+      "version": "v4.2.2",
+      "sha": "1e69f48acb82d1966a394da916b4c1698aa569d6"
+    }
+  }
+}

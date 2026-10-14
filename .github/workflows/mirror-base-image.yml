@@ -1,0 +1,105 @@
+# Copies the base image once by digest from Docker Hub to GHCR with crane.
+# The copy keeps the OCI index with all platforms and attestation manifests,
+# so its digest must equal images.base.index_digest in tools/versions.json.
+# Running it again only verifies an existing mirror.
+name: mirror-base-image
+run-name: mirror base image
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: mcs-mirror
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  mirror:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install crane
+        run: |
+          mkdir -p "$RUNNER_TEMP/bin"
+          tools/install.sh tool crane "$RUNNER_TEMP/bin"
+          echo "$RUNNER_TEMP/bin" >>"$GITHUB_PATH"
+
+      - name: Read pins
+        run: |
+          v=tools/versions.json
+          source=$(jq -er '.images.base.source' "$v")
+          index_digest=$(jq -er '.images.base.index_digest' "$v")
+          amd64_digest=$(jq -er '.images.base.linux_amd64_digest' "$v")
+          mirror=$(jq -er '.images.base.mirror.name' "$v")
+          mirror_tag=$(jq -er '.images.base.mirror.tag' "$v")
+          {
+            echo "SOURCE_REPO=${source%:*}"
+            echo "INDEX_DIGEST=$index_digest"
+            echo "AMD64_DIGEST=$amd64_digest"
+            echo "MIRROR=$mirror"
+            echo "MIRROR_TAG=$mirror_tag"
+          } >>"$GITHUB_ENV"
+
+      - name: Check source
+        run: |
+          source_digest=$(crane digest "$SOURCE_REPO@$INDEX_DIGEST")
+          source_amd64=$(crane digest --platform linux/amd64 "$SOURCE_REPO@$INDEX_DIGEST")
+          echo "source index        $source_digest"
+          echo "source linux/amd64  $source_amd64"
+          [[ $source_digest == "$INDEX_DIGEST" && $source_amd64 == "$AMD64_DIGEST" ]]
+          crane manifest "$SOURCE_REPO@$INDEX_DIGEST" >"$RUNNER_TEMP/source-index.json"
+
+      - name: Log in to GHCR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s' "$GITHUB_TOKEN" | crane auth login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+
+      - name: Copy
+        run: |
+          if existing=$(crane digest "$MIRROR:$MIRROR_TAG" 2>/dev/null); then
+            if [[ $existing != "$INDEX_DIGEST" ]]; then
+              echo "::error::$MIRROR:$MIRROR_TAG exists with digest $existing, expected $INDEX_DIGEST."
+              exit 1
+            fi
+            echo "The mirror already holds $INDEX_DIGEST. Nothing copied."
+          else
+            crane copy "$SOURCE_REPO@$INDEX_DIGEST" "$MIRROR:$MIRROR_TAG"
+          fi
+
+      - name: Verify
+        run: |
+          mirror_digest=$(crane digest "$MIRROR:$MIRROR_TAG")
+          mirror_amd64=$(crane digest --platform linux/amd64 "$MIRROR@$INDEX_DIGEST")
+          crane manifest "$MIRROR@$INDEX_DIGEST" >"$RUNNER_TEMP/mirror-index.json"
+          cmp "$RUNNER_TEMP/source-index.json" "$RUNNER_TEMP/mirror-index.json"
+          children=0
+          for child in $(jq -r '.manifests[].digest' "$RUNNER_TEMP/mirror-index.json"); do
+            actual="sha256:$(crane manifest "$MIRROR@$child" | sha256sum | cut -d' ' -f1)"
+            [[ $actual == "$child" ]] || { echo "::error::Child manifest $child differs in the mirror."; exit 1; }
+            children=$((children + 1))
+          done
+          [[ $mirror_digest == "$INDEX_DIGEST" && $mirror_amd64 == "$AMD64_DIGEST" ]]
+          {
+            echo "## Base image mirror"
+            echo
+            echo "| | Digest |"
+            echo "|---|---|"
+            echo "| source index \`$SOURCE_REPO\` | \`$INDEX_DIGEST\` |"
+            echo "| mirror index \`$MIRROR:$MIRROR_TAG\` | \`$mirror_digest\` |"
+            echo "| mirror linux/amd64 | \`$mirror_amd64\` |"
+            echo
+            echo "Index manifests byte identical, $children child manifests verified by digest."
+          } | tee -a "$GITHUB_STEP_SUMMARY"

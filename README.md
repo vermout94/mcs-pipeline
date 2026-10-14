@@ -6,7 +6,11 @@ The experiment varies the four controls in a full 2^4 factorial design. It measu
 
 This repository is the replication package of the thesis. The thesis refers to tags (`campaign-YYYY-MM-DD`) and commit hashes of this repository.
 
-Status: under construction. The repository contains the application under build. Pipeline, harness and measurement data follow.
+Status: under construction. The repository contains the application under build and the measurement workflow with the baseline and factor B (signing) for GitHub hosted runners. The other factors, the orchestrator, the AWS environment and the measurement data follow.
+
+## Measurement design
+
+[`docs/measurement.md`](docs/measurement.md) describes the stages, their boundaries, the preparation outside the stages and the network dependent parts. The workflows are in [`.github/workflows/`](.github/workflows/), the pinned tool versions with SHA-256 in [`tools/versions.json`](tools/versions.json).
 
 ## Application under build
 

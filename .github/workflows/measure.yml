@@ -1,0 +1,278 @@
+# Measurement workflow: one run of the reference pipeline in one configuration
+# of the 2^4 plan. Stages, sub-times and their boundaries: docs/measurement.md.
+# Implemented so far: baseline (checkout, build, test, push) and factor B (sign)
+# on GitHub hosted runners. Other factors and runner=metal are refused.
+name: measure
+run-name: >-
+  measure ${{ inputs.correlation_id }} runner=${{ inputs.runner }}
+  sbom=${{ inputs.sbom }} sign=${{ inputs.sign }}
+  provenance=${{ inputs.provenance }} policy=${{ inputs.policy }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      correlation_id:
+        description: "Correlation ID: 8 to 64 characters a-z, 0-9 and -, first character a-z or 0-9"
+        type: string
+        required: true
+      runner:
+        description: "Environment"
+        type: choice
+        options:
+          - hosted
+          - metal
+        default: hosted
+      sbom:
+        description: "Factor A: SBOM generation and scan (Syft, Grype)"
+        type: boolean
+        default: false
+      sign:
+        description: "Factor B: signing (cosign keyless)"
+        type: boolean
+        default: false
+      provenance:
+        description: "Factor C: provenance (actions/attest)"
+        type: boolean
+        default: false
+      policy:
+        description: "Factor D: policy gate (OPA, Conftest)"
+        type: boolean
+        default: false
+
+permissions: {}
+
+# One measurement run at a time, across all environments.
+concurrency:
+  group: mcs-measure
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  measure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    # The same permissions in every configuration (docs/measurement.md).
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    env:
+      APP_IMAGE: ghcr.io/${{ github.repository }}/petclinic
+      CORRELATION_ID: ${{ inputs.correlation_id }}
+      MCS_RUNNER: ${{ inputs.runner }}
+      MCS_SBOM: ${{ inputs.sbom }}
+      MCS_SIGN: ${{ inputs.sign }}
+      MCS_PROVENANCE: ${{ inputs.provenance }}
+      MCS_POLICY: ${{ inputs.policy }}
+    steps:
+      - name: Check inputs
+        id: guard
+        run: |
+          LC_ALL=C
+          fail() {
+            echo "::error title=Run refused::$1"
+            exit 1
+          }
+          [[ $MCS_RUNNER == hosted ]] || fail "runner=metal is not implemented yet. Only runner=hosted runs."
+          [[ $MCS_SBOM == false ]] || fail "Factor A (sbom) is not implemented yet."
+          [[ $MCS_PROVENANCE == false ]] || fail "Factor C (provenance) is not implemented yet."
+          [[ $MCS_POLICY == false ]] || fail "Factor D (policy) is not implemented yet."
+          [[ $CORRELATION_ID =~ ^[a-z0-9][a-z0-9-]{7,63}$ ]] ||
+            fail "correlation_id needs 8 to 64 characters a-z, 0-9 and -, the first one a-z or 0-9."
+          mkdir -p "$RUNNER_TEMP/measure" "$RUNNER_TEMP/bin"
+          {
+            echo "MCS_OUT=$RUNNER_TEMP/measure"
+            echo "MCS_BIN=$RUNNER_TEMP/bin"
+          } >>"$GITHUB_ENV"
+          echo "$RUNNER_TEMP/bin" >>"$GITHUB_PATH"
+
+      # Stage 1: checkout. The action runs in its own step, so the steps before
+      # and after it write the marks.
+      - name: "Stage checkout: start mark"
+        run: |
+          # tools/timing.py is not checked out yet. Same event format.
+          python3 -I -S - <<'EOF'
+          import json, os, time
+          mono = time.clock_gettime_ns(time.CLOCK_MONOTONIC)
+          wall = time.clock_gettime_ns(time.CLOCK_REALTIME)
+          event = {"kind": "stage", "name": "checkout", "event": "start", "monotonic_ns": mono,
+                   "wall_ns": wall, "exit_code": None, "network": True}
+          with open(os.path.join(os.environ["MCS_OUT"], "events.jsonl"), "a", encoding="utf-8") as f:
+              f.write(json.dumps(event) + "\n")
+          EOF
+
+      - name: "Stage checkout"
+        id: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: "Stage checkout: end mark"
+        run: python3 -I -S tools/timing.py mark end stage checkout --exit-code 0
+
+      # Preparation: outside the eight stages, timed as separate intervals.
+      - name: "Prepare: read pins"
+        id: pins
+        run: |
+          v=tools/versions.json
+          mirror=$(jq -er '.images.base.mirror.name' "$v")
+          index_digest=$(jq -er '.images.base.index_digest' "$v")
+          if ! mirror_digest=$(jq -er '.images.base.mirror.digest' "$v"); then
+            echo "::error::The base image mirror is not recorded in tools/versions.json. Run the workflow mirror-base-image first."
+            exit 1
+          fi
+          if [[ $mirror_digest != "$index_digest" ]]; then
+            echo "::error::The mirror digest in tools/versions.json differs from the index digest of the source."
+            exit 1
+          fi
+          key=$(jq -er '.maven_repository.cache_name' "$v")
+          if ! expected=$(jq -er '.maven_repository.content_sha256' "$v"); then
+            echo "::error::No Maven repository snapshot recorded in tools/versions.json. Run the workflow seed-maven-repository first."
+            exit 1
+          fi
+          {
+            echo "maven_cache_name=$key"
+            echo "maven_content_sha256=$expected"
+          } >>"$GITHUB_OUTPUT"
+          echo "BASE_IMAGE=$mirror@$mirror_digest" >>"$GITHUB_ENV"
+          cp "$v" "$MCS_OUT/versions.json"
+
+      - name: "Prepare: JDK"
+        run: |
+          python3 -I -S tools/timing.py run prep jdk --network -- tools/install.sh jdk "$RUNNER_TEMP/jdk"
+          echo "JAVA_HOME=$RUNNER_TEMP/jdk" >>"$GITHUB_ENV"
+          echo "$RUNNER_TEMP/jdk/bin" >>"$GITHUB_PATH"
+
+      - name: "Prepare: Maven distribution"
+        run: python3 -I -S tools/timing.py run prep maven-distribution --network -- tools/install.sh maven
+
+      - name: "Prepare: cosign"
+        run: python3 -I -S tools/timing.py run prep tool.cosign --network -- tools/install.sh tool cosign "$MCS_BIN"
+
+      - name: "Prepare: syft"
+        run: python3 -I -S tools/timing.py run prep tool.syft --network -- tools/install.sh tool syft "$MCS_BIN"
+
+      - name: "Prepare: grype"
+        run: python3 -I -S tools/timing.py run prep tool.grype --network -- tools/install.sh tool grype "$MCS_BIN"
+
+      - name: "Prepare: opa"
+        run: python3 -I -S tools/timing.py run prep tool.opa --network -- tools/install.sh tool opa "$MCS_BIN"
+
+      - name: "Prepare: conftest"
+        run: python3 -I -S tools/timing.py run prep tool.conftest --network -- tools/install.sh tool conftest "$MCS_BIN"
+
+      - name: "Prepare: Maven repository, start mark"
+        run: |
+          if [[ -e ~/.m2/repository ]]; then
+            echo "::error::~/.m2/repository exists before the restore."
+            exit 1
+          fi
+          python3 -I -S tools/timing.py mark start prep maven-repository.restore --network
+
+      - name: "Prepare: Maven repository"
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.m2/repository
+          key: ${{ steps.pins.outputs.maven_cache_name }}
+          fail-on-cache-miss: true
+
+      - name: "Prepare: Maven repository, end mark and hash"
+        env:
+          EXPECTED: ${{ steps.pins.outputs.maven_content_sha256 }}
+        run: |
+          python3 -I -S tools/timing.py mark end prep maven-repository.restore --exit-code 0
+          python3 -I -S tools/timing.py run prep maven-repository.hash -- \
+            python3 -I -S tools/m2hash.py ~/.m2/repository --out "$MCS_OUT/maven-repository.json"
+          actual=$(jq -er '.content_sha256' "$MCS_OUT/maven-repository.json")
+          if [[ $actual != "$EXPECTED" ]]; then
+            echo "::error::Content hash of the restored Maven repository ($actual) differs from tools/versions.json ($EXPECTED)."
+            exit 1
+          fi
+
+      - name: "Prepare: base image"
+        run: |
+          python3 -I -S tools/timing.py run prep base-image.pull --network --log "$MCS_OUT/base-image-pull.log" -- \
+            docker pull "$BASE_IMAGE"
+
+      # Stage 2: build. Maven and image build as two sub-times.
+      - name: "Stage build"
+        working-directory: app
+        run: |
+          python3 -I -S ../tools/timing.py run stage build --sub build.maven --first --log "$MCS_OUT/build-maven.log" -- \
+            env -u ACTIONS_ID_TOKEN_REQUEST_TOKEN -u ACTIONS_ID_TOKEN_REQUEST_URL \
+            ./mvnw -B -o -DskipTests -Dcyclonedx.skip=true package
+          python3 -I -S ../tools/timing.py run stage build --sub build.image --last --log "$MCS_OUT/build-image.log" -- \
+            docker buildx build --progress=plain --provenance=false --sbom=false --load \
+            --build-arg "BASE_IMAGE=$BASE_IMAGE" --build-arg "CORRELATION_ID=$CORRELATION_ID" \
+            --tag "$APP_IMAGE:$CORRELATION_ID" --file ../docker/Dockerfile target
+
+      # Stage 3: test.
+      - name: "Stage test"
+        working-directory: app
+        run: |
+          python3 -I -S ../tools/timing.py run stage test --log "$MCS_OUT/test.log" -- \
+            env -u ACTIONS_ID_TOKEN_REQUEST_TOKEN -u ACTIONS_ID_TOKEN_REQUEST_URL \
+            ./mvnw -B -o -Dcyclonedx.skip=true -Dspring-javaformat.validate.skip=true -Dcheckstyle.skip=true '-Dtest=!MySqlIntegrationTests,!PostgresIntegrationTests' test
+
+      # Registry login after build and test, so that Maven plugins and tests run
+      # without a registry credential on disk.
+      - name: "Prepare: registry login"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # The inner shell expands GITHUB_TOKEN, so it stays out of the command line.
+          # shellcheck disable=SC2016
+          python3 -I -S tools/timing.py run prep registry-login --network -- \
+            bash -c 'printf "%s" "$GITHUB_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin'
+
+      # Stage 4: push. The digest is read from the local image store after the stage.
+      - name: "Stage push"
+        id: push
+        run: |
+          python3 -I -S tools/timing.py run stage push --network --log "$MCS_OUT/push.log" -- \
+            docker push "$APP_IMAGE:$CORRELATION_ID"
+          digest=$(docker image inspect --format '{{range .RepoDigests}}{{println .}}{{end}}' "$APP_IMAGE:$CORRELATION_ID" |
+            sed -n "s|^$APP_IMAGE@||p")
+          reported=$(sed -n 's/^.*: digest: \(sha256:[0-9a-f]\{64\}\) size: [0-9]*$/\1/p' "$MCS_OUT/push.log")
+          if [[ ! $digest =~ ^sha256:[0-9a-f]{64}$ || $digest != "$reported" ]]; then
+            echo "::error::Image digest missing or inconsistent (image store: '$digest', push output: '$reported')."
+            exit 1
+          fi
+          jq -n --arg name "$APP_IMAGE" --arg tag "$CORRELATION_ID" --arg digest "$digest" \
+            '{name: $name, tag: $tag, digest: $digest}' >"$MCS_OUT/image.json"
+          echo "digest=$digest" >>"$GITHUB_OUTPUT"
+
+      # Stage 6: sign (factor B). All later steps use the digest.
+      - name: "Stage sign"
+        if: inputs.sign
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          if [[ -e ~/.sigstore ]]; then
+            echo "::error::~/.sigstore exists before the stage, the TUF metadata would not be fetched."
+            exit 1
+          fi
+          python3 -I -S tools/timing.py run stage sign --sub sign.tuf --first --network --log "$MCS_OUT/sign-tuf.log" -- \
+            cosign initialize
+          python3 -I -S tools/timing.py run stage sign --sub sign.sign --last --network --log "$MCS_OUT/sign-sign.log" -- \
+            cosign sign --yes --oidc-provider github-actions "$APP_IMAGE@$DIGEST"
+
+      # Collect: runs after every outcome once the repository is checked out.
+      - name: "Collect: environment and timing"
+        if: always() && steps.checkout.outcome == 'success'
+        run: python3 -I -S tools/collect.py
+
+      - name: "Collect: upload"
+        if: always() && steps.guard.outcome == 'success'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: measure-${{ inputs.correlation_id }}
+          path: ${{ runner.temp }}/measure
+          if-no-files-found: error
+          retention-days: 90

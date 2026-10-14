@@ -1,0 +1,10 @@
+mcs-pipeline
+Copyright 2026 David Berger
+
+This product includes Spring PetClinic
+(https://github.com/spring-projects/spring-petclinic), commit
+500158f732419217507c7656904b8e6aa1bcc0d6, in the directory app/.
+Copyright 2012-2025 the original author or authors.
+Licensed under the Apache License, Version 2.0. The license text is in
+app/LICENSE.txt. The origin of the copy and all deviations are listed in
+app/UPSTREAM.md.

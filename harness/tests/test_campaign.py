@@ -3,11 +3,14 @@
 import copy
 import hashlib
 import json
+import logging
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 import pytest
 from conftest import artifact_for, load, write_plan
 
+from mcs_harness.__main__ import main
 from mcs_harness.campaign import CampaignStop, Paths, Runner, create_order
 from mcs_harness.github import ApiError
 from mcs_harness.manifest import validate, validator
@@ -262,7 +265,7 @@ def test_changed_plan_after_the_order_stops_the_campaign(setup):
 
 def test_order_is_written_once(setup):
     directory, github, clock = setup
-    with pytest.raises(CampaignStop, match="written once"):
+    with pytest.raises(CampaignStop, match="^data/dryrun/order.json exists, .* written once"):
         create_order(directory, github, clock)
 
 
@@ -271,7 +274,7 @@ def test_existing_raw_data_is_never_overwritten(setup):
     paths = Paths(directory)
     paths.artifacts.mkdir(parents=True)
     (paths.artifacts / "measure-dryrun-0000.zip").write_bytes(b"other")
-    with pytest.raises(CampaignStop, match="never overwritten"):
+    with pytest.raises(CampaignStop, match="^data/dryrun/artifacts/measure-dryrun-0000.zip exists .* never overwritten"):
         Runner(directory, github, clock).run()
 
 
@@ -306,3 +309,36 @@ def test_dryrun_runs_with_uncommitted_harness(setup, monkeypatch):
     monkeypatch.setattr("mcs_harness.campaign.orchestrator_info", lambda: {"commit": "b" * 40, "dirty": True})
     Runner(directory, github, clock).run()
     assert len(github.dispatches) == 4
+
+
+@pytest.fixture
+def harness_logger():
+    """main() attaches handlers to the logger mcs_harness, closed again after the test."""
+    logger = logging.getLogger("mcs_harness")
+    yield logger
+    for handler in logger.handlers:
+        handler.close()
+    logger.handlers.clear()
+
+
+def test_log_and_journal_of_a_campaign_have_no_absolute_paths(tmp_path, monkeypatch, harness_logger):
+    data = tmp_path / "data"
+    write_plan(data / "dryrun")
+    clock = FakeClock()
+    github = FakeGitHub(clock)
+    monkeypatch.setattr("mcs_harness.__main__.github_for", lambda directory: github)
+    monkeypatch.setattr("mcs_harness.campaign.Clock", lambda: clock)
+    monkeypatch.setattr("mcs_harness.campaign.orchestrator_info", lambda: {"commit": "b" * 40, "dirty": False})
+    assert main(["plan", "dryrun", "--data", str(data)]) == 0
+    assert main(["run", "dryrun", "--data", str(data)]) == 0
+    (data / "dryrun" / "manifests" / "dryrun-0000.json").unlink()
+    (data / "dryrun" / "artifacts" / "measure-dryrun-0000.zip").write_bytes(b"other")
+    assert main(["run", "dryrun", "--data", str(data)]) == 2
+    log = (data / "dryrun" / "orchestrator.log").read_text()
+    journal = (data / "dryrun" / "journal.jsonl").read_text()
+    assert "campaign directory data/dryrun\n" in log
+    assert "data/dryrun/artifacts/measure-dryrun-0000.zip exists" in log
+    assert "data/dryrun/artifacts/measure-dryrun-0000.zip exists" in journal
+    for text in (log, journal):
+        for absolute in (str(tmp_path), str(tmp_path.resolve()), str(Path.home())):
+            assert absolute not in text

@@ -10,6 +10,9 @@ X-GitHub-Api-Version: 2026-03-10.
 - Download endpoints answer 302 with a short lived URL of a storage service.
   The client follows it by hand and without the Authorization header.
 - The token is never part of a log line, an exception or repr().
+- A network error is logged and reported with its cause (URLError.reason,
+  for example name resolution, refused connection, TLS or timeout) and the
+  time the attempt took. The token is removed from the cause.
 - TLS certificates are checked against the CA bundle of certifi (pinned in
   uv.lock), independent of the OpenSSL setup of the Python installation.
 
@@ -131,6 +134,7 @@ class GitHub:
     def get(self, path, params=None, accept="application/vnd.github+json"):
         """GET with up to four attempts. Returns (status, headers, body)."""
         for attempt in range(GET_ATTEMPTS):
+            started = time.monotonic()
             try:
                 status, headers, body = self._send("GET", path, params, accept=accept)
                 self._respect_rate_limit(headers)
@@ -143,11 +147,12 @@ class GitHub:
                 log.warning("GET %s: %s, attempt %d of %d, next in %d s",
                             path, error.status, attempt + 1, GET_ATTEMPTS, wait)
             except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
+                cause = f"{_cause(error, self._token)} after {time.monotonic() - started:.1f} s"
                 if attempt == GET_ATTEMPTS - 1:
-                    raise ApiError("GET", path, "network", type(error).__name__) from None
+                    raise ApiError("GET", path, "network", cause) from None
                 wait = BACKOFF_S[attempt]
                 log.warning("GET %s: %s, attempt %d of %d, next in %d s",
-                            path, type(error).__name__, attempt + 1, GET_ATTEMPTS, wait)
+                            path, cause, attempt + 1, GET_ATTEMPTS, wait)
             self.sleep(wait)
         raise AssertionError("unreachable")
 
@@ -180,14 +185,15 @@ class GitHub:
         for attempt in range(GET_ATTEMPTS):
             # A new request without the Authorization header.
             request = urllib.request.Request(location, headers={"User-Agent": USER_AGENT})
+            started = time.monotonic()
             try:
                 with self._download_opener.open(request, timeout=self.timeout) as response:
                     return response.read()
             except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
+                cause = f"{_cause(error, self._token)} after {time.monotonic() - started:.1f} s"
                 if attempt == GET_ATTEMPTS - 1:
-                    raise ApiError("GET", path + " (download)", "network", type(error).__name__) from None
-                log.warning("download %s: %s, attempt %d of %d", path, type(error).__name__,
-                            attempt + 1, GET_ATTEMPTS)
+                    raise ApiError("GET", path + " (download)", "network", cause) from None
+                log.warning("download %s: %s, attempt %d of %d", path, cause, attempt + 1, GET_ATTEMPTS)
                 self.sleep(BACKOFF_S[attempt])
         raise AssertionError("unreachable")
 
@@ -204,7 +210,12 @@ class GitHub:
         required. The parameter return_run_details no longer exists and is not sent.
         """
         path = self.repo_path(f"/actions/workflows/{workflow}/dispatches")
-        status, _, body = self._send("POST", path, body={"ref": ref, "inputs": inputs})
+        started = time.monotonic()
+        try:
+            status, _, body = self._send("POST", path, body={"ref": ref, "inputs": inputs})
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
+            cause = f"{_cause(error, self._token)} after {time.monotonic() - started:.1f} s"
+            raise ApiError("POST", path, "network", cause) from None
         if status != 200:
             raise ApiError("POST", path, status, "expected 200 with run details")
         response = json.loads(body)
@@ -278,6 +289,24 @@ def _rate_limit_wait_s(headers):
         if reset and reset.isdigit():
             return min(max(int(reset) - int(time.time()), 0) + 5, MAX_RATE_LIMIT_WAIT_S)
     return 60
+
+
+def _cause(error, token):
+    """Class and cause of a network error for log and exceptions, without the token.
+
+    urllib wraps the cause of a failed connection in URLError.reason: an
+    exception (gaierror, ConnectionRefusedError, SSLCertVerificationError,
+    TimeoutError) or a string.
+    """
+    if isinstance(error, urllib.error.URLError):
+        reason = error.reason
+        detail = f"{type(reason).__name__}: {reason}" if isinstance(reason, BaseException) else str(reason)
+    else:
+        detail = str(error)
+    text = f"{type(error).__name__} ({detail or 'no detail'})"
+    if token:
+        text = text.replace(token, "***")
+    return text[:300]
 
 
 def _message(text):

@@ -141,6 +141,8 @@ def test_load_plan_accepts_the_example(tmp_path):
     {"unknown": 1},
 ])
 def test_load_plan_refuses_invalid_plans(tmp_path, change):
-    write_plan(tmp_path / "dryrun", **change)
-    with pytest.raises(PlanError):
-        load_plan(tmp_path / "dryrun" / "plan.yaml")
+    write_plan(tmp_path / "data" / "dryrun", **change)
+    with pytest.raises(PlanError) as error:
+        load_plan(tmp_path / "data" / "dryrun" / "plan.yaml")
+    assert str(error.value).startswith("data/dryrun/plan.yaml: ")
+    assert str(tmp_path) not in str(error.value)

@@ -54,12 +54,13 @@ def main(argv=None):
     parser.add_argument("--data", type=Path, default=DATA, help="directory of the campaigns (default: data/)")
     args = parser.parse_args(argv)
     directory = args.data / args.campaign
-    if not (directory / "plan.yaml").exists():
-        print(f"{directory / 'plan.yaml'} missing", file=sys.stderr)
+    paths = Paths(directory)
+    if not paths.plan.exists():
+        print(f"{paths.shown(paths.plan)} missing", file=sys.stderr)
         return 1
 
     if args.command in ("plan", "run"):
-        setup_logging(Paths(directory).log)
+        setup_logging(paths.log)
     else:
         setup_logging()
 
@@ -73,7 +74,7 @@ def main(argv=None):
                          run["configuration"], "  first run" if run["first_runs"] else "")
             return 0
         if args.command == "run":
-            log.info("mcs_harness %s, campaign directory %s", VERSION, directory)
+            log.info("mcs_harness %s, campaign directory %s", VERSION, paths.shown())
             Runner(directory, github_for(directory)).run()
             return 0
         if args.command == "status":
@@ -85,7 +86,6 @@ def main(argv=None):
                       f"{run_id or '':>12} {conclusion or 'open'} {failure_class or ''}")
             return 0
         if args.command == "validate":
-            paths = Paths(directory)
             validator = manifest_module.validator()
             files = sorted(paths.manifests.glob("*.json"))
             bad = 0
@@ -102,7 +102,7 @@ def main(argv=None):
     except (CampaignStop, MatchError) as error:
         log.error("campaign stopped: %s", error)
         if args.command == "run":
-            Journal(Paths(directory).journal, Clock()).append("stopped", reason=str(error))
+            Journal(paths.journal, Clock()).append("stopped", reason=str(error))
         return 2
     except (PlanError, TokenError, ApiError) as error:
         log.error("%s", error)
@@ -110,7 +110,7 @@ def main(argv=None):
     except KeyboardInterrupt:
         log.error("interrupted")
         if args.command == "run":
-            Journal(Paths(directory).journal, Clock()).append("interrupted")
+            Journal(paths.journal, Clock()).append("interrupted")
         return 130
     return 1
 

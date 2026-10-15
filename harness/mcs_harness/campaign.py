@@ -10,6 +10,10 @@ Files in data/<campaign>/:
   artifacts/        measure-<correlation ID>.zip, unchanged
   job-logs/         <correlation ID>.log, unchanged, for runs that did not succeed
 
+Log lines, messages and the journal show these paths relative to the
+repository (data/<campaign>/...), never as absolute paths, so they carry no
+home directory or user name.
+
 Runs strictly one after the other. Before each dispatch the orchestrator waits
 until the pause after the previous run has passed and no run of the workflow is
 queued or in progress. A position counts as done when its manifest exists. A
@@ -91,11 +95,11 @@ def write_atomic(path, data):
         raise
 
 
-def write_once(path, data):
+def write_once(path, data, shown):
     """Raw data is never overwritten: an existing file must have the same bytes."""
     if path.exists():
         if sha256(path.read_bytes()) != sha256(data):
-            raise CampaignStop(f"{path} exists with other content, raw data is never overwritten")
+            raise CampaignStop(f"{shown} exists with other content, raw data is never overwritten")
         return
     write_atomic(path, data)
 
@@ -106,7 +110,9 @@ def json_bytes(value):
 
 class Paths:
     def __init__(self, directory):
-        self.dir = Path(directory)
+        self.dir = Path(directory).resolve()
+        # Parent of the data directory: the repository for the default data/.
+        self.root = self.dir.parent.parent
         self.plan = self.dir / "plan.yaml"
         self.order = self.dir / "order.json"
         self.journal = self.dir / "journal.jsonl"
@@ -117,6 +123,10 @@ class Paths:
 
     def manifest(self, run):
         return self.manifests / f"{run['correlation_id']}.json"
+
+    def shown(self, path=None):
+        """A path of the campaign for logs and messages: data/<campaign>/..., never absolute."""
+        return (path or self.dir).relative_to(self.root).as_posix()
 
 
 class Journal:
@@ -160,7 +170,7 @@ def create_order(directory, github, clock=None):
     clock = clock or Clock()
     paths = Paths(directory)
     if paths.order.exists():
-        raise CampaignStop(f"{paths.order} exists, the order of a campaign is written once")
+        raise CampaignStop(f"{paths.shown(paths.order)} exists, the order of a campaign is written once")
     plan, plan_sha256 = load_plan(paths.plan)
     commit = github.head_commit(plan["ref"])
     order = make_order(plan, plan_sha256, commit, iso(clock.now()))
@@ -174,7 +184,7 @@ def create_order(directory, github, clock=None):
 
 def load_order(paths):
     if not paths.order.exists():
-        raise CampaignStop(f"{paths.order} missing, write it with the command plan first")
+        raise CampaignStop(f"{paths.shown(paths.order)} missing, write it with the command plan first")
     data = paths.order.read_bytes()
     order = json.loads(data)
     _, plan_sha256 = load_plan(paths.plan)
@@ -325,7 +335,8 @@ class Runner:
         if problems:
             write_atomic(self.paths.manifests / f"{cid}.invalid.json", json_bytes(manifest))
             raise CampaignStop(f"{cid}: manifest does not validate: " + "; ".join(problems[:10]))
-        write_once(self.paths.manifest(entry), json_bytes(manifest))
+        path = self.paths.manifest(entry)
+        write_once(path, json_bytes(manifest), self.paths.shown(path))
         self.journal.append("collected", position=position, correlation_id=cid, run_id=run_id,
                             conclusion=run.get("conclusion"), failure_class=result.failure_class,
                             failure_rule=result.rule, divergences=len(manifest["checks"]["divergences"]))
@@ -449,7 +460,7 @@ class Runner:
         if len(data) != item.get("size_in_bytes"):
             raise CampaignStop(f"{name}: {len(data)} bytes downloaded, the API names {item.get('size_in_bytes')}")
         path = self.paths.artifacts / f"{name}.zip"
-        write_once(path, data)
+        write_once(path, data, self.paths.shown(path))
         meta = {
             "name": name,
             "id": item["id"],
@@ -471,7 +482,7 @@ class Runner:
         except ApiError as error:
             return None, None, f"job log not available: {error.status}"
         path = self.paths.job_logs / f"{entry['correlation_id']}.log"
-        write_once(path, data)
+        write_once(path, data, self.paths.shown(path))
         meta = {"path": str(path.relative_to(self.paths.dir)), "sha256": sha256(data), "bytes": len(data)}
         return meta, data.decode("utf-8", "replace"), None
 

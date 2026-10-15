@@ -1,7 +1,11 @@
 """The REST client against a local HTTP server."""
 
 import json
+import logging
+import re
+import socket
 import threading
+import urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
@@ -63,6 +67,13 @@ def client(server):
 
 def ok(value):
     return 200, {"Content-Type": "application/json"}, json.dumps(value).encode()
+
+
+def closed_port():
+    """A local port without listener: connections are refused at once."""
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
 
 
 def test_dispatch_sends_version_header_and_no_return_run_details(server):
@@ -133,3 +144,36 @@ def test_list_runs_pages_and_passes_the_filter(server):
 
 def test_token_is_not_in_repr():
     assert TOKEN not in repr(GitHub("o/r", TOKEN))
+
+
+def test_network_error_names_the_cause_without_token(caplog):
+    github = GitHub("o/r", TOKEN, base=f"http://127.0.0.1:{closed_port()}", sleep=lambda s: None)
+    with caplog.at_level(logging.WARNING, logger="mcs_harness"), pytest.raises(ApiError) as error:
+        github.get_run(1)
+    warnings = [r.getMessage() for r in caplog.records if r.levelno == logging.WARNING]
+    assert len(warnings) == 3
+    for line in warnings + [str(error.value)]:
+        assert re.search(r"URLError \(ConnectionRefusedError: .+\) after \d+\.\d s", line)
+        assert TOKEN not in line
+    assert str(error.value).startswith("GET /repos/o/r/actions/runs/1: network URLError (")
+
+
+def test_cause_never_contains_the_token(caplog, monkeypatch):
+    github = GitHub("o/r", TOKEN, sleep=lambda s: None)
+
+    def refuse(request, timeout):
+        raise urllib.error.URLError(f"proxy refused Bearer {TOKEN}")
+
+    monkeypatch.setattr(github._opener, "open", refuse)
+    with caplog.at_level(logging.WARNING, logger="mcs_harness"), pytest.raises(ApiError) as error:
+        github.get_run(1)
+    assert TOKEN not in caplog.text and TOKEN not in str(error.value)
+    assert "URLError (proxy refused Bearer ***)" in caplog.text
+
+
+def test_dispatch_network_error_names_the_cause_and_is_not_repeated():
+    github = GitHub("o/r", TOKEN, base=f"http://127.0.0.1:{closed_port()}", sleep=lambda s: None)
+    with pytest.raises(ApiError) as error:
+        github.dispatch("measure.yml", "main", {})
+    assert error.value.status == "network"
+    assert "URLError (ConnectionRefusedError: " in str(error.value) and TOKEN not in str(error.value)

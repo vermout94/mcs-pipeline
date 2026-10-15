@@ -180,7 +180,7 @@ The pause is 60 s, set in `plan.yaml` and fixed for the whole campaign. On GitHu
 
 ### After each run
 
-The orchestrator reads the workflow run and its job from the REST API (job and step times with 1 s resolution, queue time `started_at - created_at` of the job, status), downloads the artifact `measure-<correlation ID>`, checks its SHA-256 against the digest in the REST API and stores it unchanged under `data/<campaign>/artifacts/`. GitHub deletes the artifact after 90 days. The artifacts stay outside Git (`data/*/artifacts/` in `.gitignore`), because only manifests and aggregated CSV files are versioned and the Maven logs contain the commit metadata that `git-commit-id-maven-plugin` collects. For runs that did not succeed the orchestrator also stores the job log. It then writes the manifest, validates it against [`harness/manifest.schema.json`](../harness/manifest.schema.json) and checks that every null value has a reason in `null_reasons`. A manifest that does not validate stops the orchestrator.
+The orchestrator reads the workflow run and its job from the REST API (job and step times with 1 s resolution, queue time `started_at - created_at` of the job, status), downloads the artifact `measure-<correlation ID>`, checks its SHA-256 against the digest in the REST API and stores it unchanged under `data/<campaign>/artifacts/`. GitHub deletes the artifact after 90 days. The artifacts stay outside Git (`data/*/artifacts/` in `.gitignore`), because only manifests and aggregated CSV files are versioned and the Maven logs contain the commit metadata that `git-commit-id-maven-plugin` collects. For runs that did not succeed the orchestrator also stores the job log under `data/<campaign>/job-logs/`. It contains the same Maven output and stays outside Git as well (`data/*/job-logs/`). It then writes the manifest, validates it against [`harness/manifest.schema.json`](../harness/manifest.schema.json) and checks that every null value has a reason in `null_reasons`. A manifest that does not validate stops the orchestrator.
 
 ### Divergences
 
@@ -189,6 +189,10 @@ The manifest lists in `checks.divergences` every difference between the run and 
 ### Stops
 
 The orchestrator never repeats a run. For every campaign except `dryrun` it stops before it dispatches anything if `harness/` has uncommitted changes, so every manifest of a pilot or a campaign names the commit of the orchestrator that wrote it. It stops when a dispatch request fails, when the ways of assignment disagree, when a download does not match its digest, when a manifest does not validate, when a run ran another commit and after `stop_after_consecutive_failures` runs in a row that did not succeed. A restart continues with the first position without manifest and keeps the order.
+
+### Operating rule: no push during a campaign
+
+While a campaign runs, nothing is pushed to its branch. Each run is dispatched on the head of the branch, so a push changes the commit of the next run. The orchestrator writes the manifest of that run and stops, because the run ran another commit than `order.json` names. A restart stops again after the next run, since every later run also runs the new commit. Changes to the workflow, the orchestrator or the documentation wait until the campaign is finished.
 
 ## Failure classes (RQ2)
 

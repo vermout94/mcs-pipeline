@@ -38,6 +38,8 @@ The token comes from `GH_TOKEN` or `GITHUB_TOKEN`, otherwise from `gh auth token
 
 For every campaign except `dryrun`, `run` stops before the first dispatch if `harness/` has uncommitted changes. Commit the orchestrator first.
 
+While a campaign runs, nothing is pushed to its branch (`ref` in `plan.yaml`). Every run is dispatched on the head of that branch, and the orchestrator checks after each run that it ran the commit in `order.json`. A push changes the commit of the next run: the orchestrator writes the manifest of that run and stops, and a restart stops again, because every later run also runs the new commit.
+
 Exit codes of `run`: 0 when all runs are done, 2 when the orchestrator stopped the campaign (the log names the reason, a restart continues), 130 after Ctrl-C, 1 for other errors.
 
 ## Files of a campaign
@@ -50,9 +52,9 @@ Exit codes of `run`: 0 when all runs are done, 2 when the orchestrator stopped t
 | `orchestrator.log` | `plan`, `run` | log of the orchestrator |
 | `manifests/<correlation ID>.json` | `run` | manifest of the run |
 | `artifacts/measure-<correlation ID>.zip` | `run` | artifact of the run as downloaded, SHA-256 equal to the digest in the REST API, not versioned (`.gitignore`) |
-| `job-logs/<correlation ID>.log` | `run` | job log as downloaded, only for runs that did not succeed |
+| `job-logs/<correlation ID>.log` | `run` | job log as downloaded, only for runs that did not succeed, not versioned (`.gitignore`) |
 
-`data/dryrun/` is not versioned either. Raw data is never overwritten. If a file exists with other content, the orchestrator stops.
+`data/dryrun/` is not versioned either. Raw data is never overwritten. If a file exists with other content, the orchestrator stops. The log and the journal name these files relative to the repository (`data/<campaign>/…`). A network error in the log names its cause and the time the attempt took, never the token.
 
 ## Modules
 

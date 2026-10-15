@@ -58,6 +58,11 @@ def correlation_id(campaign, position):
     return cid
 
 
+def shown(path):
+    """data/<campaign>/plan.yaml: the path relative to the repository, as in campaign.Paths.shown."""
+    return "/".join(path.resolve().parts[-3:])
+
+
 def load_plan(path):
     """Plan as dict and the SHA-256 of the file."""
     data = path.read_bytes()
@@ -66,15 +71,15 @@ def load_plan(path):
     try:
         jsonschema.validate(plan, schema, cls=jsonschema.Draft202012Validator)
     except jsonschema.ValidationError as error:
-        raise PlanError(f"{path}: {error.message} at {error.json_path}") from None
+        raise PlanError(f"{shown(path)}: {error.message} at {error.json_path}") from None
     if path.parent.name != plan["campaign"]:
-        raise PlanError(f"{path}: campaign {plan['campaign']!r} differs from the directory name")
+        raise PlanError(f"{shown(path)}: campaign {plan['campaign']!r} differs from the directory name")
     names = [c["name"] for c in plan["configurations"]]
     if len(set(names)) != len(names):
-        raise PlanError(f"{path}: configuration names are not unique")
+        raise PlanError(f"{shown(path)}: configuration names are not unique")
     cells = [cell(c["factors"]) for c in plan["configurations"]]
     if len(set(cells)) != len(cells):
-        raise PlanError(f"{path}: two configurations have the same factors")
+        raise PlanError(f"{shown(path)}: two configurations have the same factors")
     return plan, sha256_bytes(data)
 
 

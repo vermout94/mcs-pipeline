@@ -1,0 +1,20 @@
+# Pilot on GitHub hosted runners: baseline and sign, 30 runs each.
+# Seed drawn once with secrets.randbelow(2**31) before order.json was written.
+# Schema: harness/plan.schema.json.
+campaign: pilot-hosted-2026-10-15
+repository: vermout94/mcs-pipeline
+workflow: measure.yml
+ref: main
+environment: hosted
+seed: 236991098
+runs_per_configuration: 30
+first_run_blocks: 1
+pause_seconds: 60
+poll_seconds: 10
+max_wait_minutes: 60
+stop_after_consecutive_failures: 3
+configurations:
+  - name: baseline
+    factors: {sbom: false, sign: false, provenance: false, policy: false}
+  - name: sign
+    factors: {sbom: false, sign: true, provenance: false, policy: false}

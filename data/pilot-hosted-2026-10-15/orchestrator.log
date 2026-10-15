@@ -1,0 +1,423 @@
+2026-10-15T19:03:16.353Z INFO order.json written: campaign pilot-hosted-2026-10-15, seed 236991098, 60 runs, commit e6a451ac96fca61caa7de00ebe1ef8d068671137
+2026-10-15T19:03:16.354Z INFO      0 block 0  pilot-hosted-2026-10-15-0000 sign  first run
+2026-10-15T19:03:16.354Z INFO      1 block 0  pilot-hosted-2026-10-15-0001 baseline  first run
+2026-10-15T19:03:16.354Z INFO      2 block 1  pilot-hosted-2026-10-15-0002 sign
+2026-10-15T19:03:16.354Z INFO      3 block 1  pilot-hosted-2026-10-15-0003 baseline
+2026-10-15T19:03:16.354Z INFO      4 block 2  pilot-hosted-2026-10-15-0004 baseline
+2026-10-15T19:03:16.354Z INFO      5 block 2  pilot-hosted-2026-10-15-0005 sign
+2026-10-15T19:03:16.354Z INFO      6 block 3  pilot-hosted-2026-10-15-0006 sign
+2026-10-15T19:03:16.354Z INFO      7 block 3  pilot-hosted-2026-10-15-0007 baseline
+2026-10-15T19:03:16.354Z INFO      8 block 4  pilot-hosted-2026-10-15-0008 sign
+2026-10-15T19:03:16.355Z INFO      9 block 4  pilot-hosted-2026-10-15-0009 baseline
+2026-10-15T19:03:16.355Z INFO     10 block 5  pilot-hosted-2026-10-15-0010 baseline
+2026-10-15T19:03:16.355Z INFO     11 block 5  pilot-hosted-2026-10-15-0011 sign
+2026-10-15T19:03:16.355Z INFO     12 block 6  pilot-hosted-2026-10-15-0012 sign
+2026-10-15T19:03:16.355Z INFO     13 block 6  pilot-hosted-2026-10-15-0013 baseline
+2026-10-15T19:03:16.355Z INFO     14 block 7  pilot-hosted-2026-10-15-0014 baseline
+2026-10-15T19:03:16.355Z INFO     15 block 7  pilot-hosted-2026-10-15-0015 sign
+2026-10-15T19:03:16.355Z INFO     16 block 8  pilot-hosted-2026-10-15-0016 baseline
+2026-10-15T19:03:16.355Z INFO     17 block 8  pilot-hosted-2026-10-15-0017 sign
+2026-10-15T19:03:16.355Z INFO     18 block 9  pilot-hosted-2026-10-15-0018 sign
+2026-10-15T19:03:16.355Z INFO     19 block 9  pilot-hosted-2026-10-15-0019 baseline
+2026-10-15T19:03:16.355Z INFO     20 block 10  pilot-hosted-2026-10-15-0020 baseline
+2026-10-15T19:03:16.356Z INFO     21 block 10  pilot-hosted-2026-10-15-0021 sign
+2026-10-15T19:03:16.356Z INFO     22 block 11  pilot-hosted-2026-10-15-0022 sign
+2026-10-15T19:03:16.356Z INFO     23 block 11  pilot-hosted-2026-10-15-0023 baseline
+2026-10-15T19:03:16.356Z INFO     24 block 12  pilot-hosted-2026-10-15-0024 sign
+2026-10-15T19:03:16.356Z INFO     25 block 12  pilot-hosted-2026-10-15-0025 baseline
+2026-10-15T19:03:16.356Z INFO     26 block 13  pilot-hosted-2026-10-15-0026 baseline
+2026-10-15T19:03:16.356Z INFO     27 block 13  pilot-hosted-2026-10-15-0027 sign
+2026-10-15T19:03:16.356Z INFO     28 block 14  pilot-hosted-2026-10-15-0028 sign
+2026-10-15T19:03:16.356Z INFO     29 block 14  pilot-hosted-2026-10-15-0029 baseline
+2026-10-15T19:03:16.356Z INFO     30 block 15  pilot-hosted-2026-10-15-0030 baseline
+2026-10-15T19:03:16.356Z INFO     31 block 15  pilot-hosted-2026-10-15-0031 sign
+2026-10-15T19:03:16.356Z INFO     32 block 16  pilot-hosted-2026-10-15-0032 sign
+2026-10-15T19:03:16.356Z INFO     33 block 16  pilot-hosted-2026-10-15-0033 baseline
+2026-10-15T19:03:16.357Z INFO     34 block 17  pilot-hosted-2026-10-15-0034 sign
+2026-10-15T19:03:16.357Z INFO     35 block 17  pilot-hosted-2026-10-15-0035 baseline
+2026-10-15T19:03:16.357Z INFO     36 block 18  pilot-hosted-2026-10-15-0036 sign
+2026-10-15T19:03:16.357Z INFO     37 block 18  pilot-hosted-2026-10-15-0037 baseline
+2026-10-15T19:03:16.357Z INFO     38 block 19  pilot-hosted-2026-10-15-0038 baseline
+2026-10-15T19:03:16.357Z INFO     39 block 19  pilot-hosted-2026-10-15-0039 sign
+2026-10-15T19:03:16.357Z INFO     40 block 20  pilot-hosted-2026-10-15-0040 baseline
+2026-10-15T19:03:16.357Z INFO     41 block 20  pilot-hosted-2026-10-15-0041 sign
+2026-10-15T19:03:16.357Z INFO     42 block 21  pilot-hosted-2026-10-15-0042 baseline
+2026-10-15T19:03:16.357Z INFO     43 block 21  pilot-hosted-2026-10-15-0043 sign
+2026-10-15T19:03:16.357Z INFO     44 block 22  pilot-hosted-2026-10-15-0044 sign
+2026-10-15T19:03:16.357Z INFO     45 block 22  pilot-hosted-2026-10-15-0045 baseline
+2026-10-15T19:03:16.358Z INFO     46 block 23  pilot-hosted-2026-10-15-0046 baseline
+2026-10-15T19:03:16.358Z INFO     47 block 23  pilot-hosted-2026-10-15-0047 sign
+2026-10-15T19:03:16.358Z INFO     48 block 24  pilot-hosted-2026-10-15-0048 sign
+2026-10-15T19:03:16.358Z INFO     49 block 24  pilot-hosted-2026-10-15-0049 baseline
+2026-10-15T19:03:16.358Z INFO     50 block 25  pilot-hosted-2026-10-15-0050 baseline
+2026-10-15T19:03:16.358Z INFO     51 block 25  pilot-hosted-2026-10-15-0051 sign
+2026-10-15T19:03:16.358Z INFO     52 block 26  pilot-hosted-2026-10-15-0052 sign
+2026-10-15T19:03:16.358Z INFO     53 block 26  pilot-hosted-2026-10-15-0053 baseline
+2026-10-15T19:03:16.358Z INFO     54 block 27  pilot-hosted-2026-10-15-0054 sign
+2026-10-15T19:03:16.358Z INFO     55 block 27  pilot-hosted-2026-10-15-0055 baseline
+2026-10-15T19:03:16.358Z INFO     56 block 28  pilot-hosted-2026-10-15-0056 sign
+2026-10-15T19:03:16.358Z INFO     57 block 28  pilot-hosted-2026-10-15-0057 baseline
+2026-10-15T19:03:16.358Z INFO     58 block 29  pilot-hosted-2026-10-15-0058 baseline
+2026-10-15T19:03:16.358Z INFO     59 block 29  pilot-hosted-2026-10-15-0059 sign
+2026-10-15T19:49:16.184Z INFO mcs_harness 0.1.0, campaign directory data/pilot-hosted-2026-10-15
+2026-10-15T19:49:16.761Z INFO campaign pilot-hosted-2026-10-15: 0 of 60 runs done, commit e6a451ac96fc, orchestrator e6a451ac96fc
+2026-10-15T19:49:22.354Z INFO pilot-hosted-2026-10-15-0000 sign dispatched: run 38796986101, block 0, position 0
+2026-10-15T19:49:22.810Z INFO pilot-hosted-2026-10-15-0000 run 38796986101: queued
+2026-10-15T19:49:33.255Z INFO pilot-hosted-2026-10-15-0000 run 38796986101: in_progress
+2026-10-15T19:50:56.713Z INFO pilot-hosted-2026-10-15-0000 run 38796986101: completed
+2026-10-15T19:50:59.315Z INFO pilot-hosted-2026-10-15-0000 sign run 38796986101: success, stages 49.707 s, job 79.0 s, queue 4.0 s
+2026-10-15T19:50:59.802Z INFO pause 57 s
+2026-10-15T19:52:01.106Z INFO pilot-hosted-2026-10-15-0001 baseline dispatched: run 38797336463, block 0, position 1
+2026-10-15T19:52:01.555Z INFO pilot-hosted-2026-10-15-0001 run 38797336463: queued
+2026-10-15T19:52:11.922Z INFO pilot-hosted-2026-10-15-0001 run 38797336463: in_progress
+2026-10-15T19:53:14.696Z INFO pilot-hosted-2026-10-15-0001 run 38797336463: completed
+2026-10-15T19:53:16.990Z INFO pilot-hosted-2026-10-15-0001 baseline run 38797336463: success, stages 39.515 s, job 62.0 s, queue 3.0 s
+2026-10-15T19:53:17.637Z INFO pause 57 s
+2026-10-15T19:54:18.853Z INFO pilot-hosted-2026-10-15-0002 sign dispatched: run 38797639147, block 1, position 2
+2026-10-15T19:54:19.333Z INFO pilot-hosted-2026-10-15-0002 run 38797639147: queued
+2026-10-15T19:54:29.983Z INFO pilot-hosted-2026-10-15-0002 run 38797639147: in_progress
+2026-10-15T19:56:04.017Z INFO pilot-hosted-2026-10-15-0002 run 38797639147: completed
+2026-10-15T19:56:06.885Z INFO pilot-hosted-2026-10-15-0002 sign run 38797639147: success, stages 78.113 s, job 100.0 s, queue 2.0 s
+2026-10-15T19:56:07.531Z INFO pause 56 s
+2026-10-15T19:57:07.537Z INFO pilot-hosted-2026-10-15-0003 baseline dispatched: run 38798011447, block 1, position 3
+2026-10-15T19:57:07.914Z INFO pilot-hosted-2026-10-15-0003 run 38798011447: queued
+2026-10-15T19:57:18.375Z INFO pilot-hosted-2026-10-15-0003 run 38798011447: in_progress
+2026-10-15T19:58:20.756Z INFO pilot-hosted-2026-10-15-0003 run 38798011447: completed
+2026-10-15T19:58:23.308Z INFO pilot-hosted-2026-10-15-0003 baseline run 38798011447: success, stages 30.208 s, job 62.0 s, queue 2.0 s
+2026-10-15T19:58:23.950Z INFO pause 57 s
+2026-10-15T19:59:24.732Z INFO pilot-hosted-2026-10-15-0004 baseline dispatched: run 38798304535, block 2, position 4
+2026-10-15T19:59:25.074Z INFO pilot-hosted-2026-10-15-0004 run 38798304535: queued
+2026-10-15T19:59:35.472Z INFO pilot-hosted-2026-10-15-0004 run 38798304535: in_progress
+2026-10-15T20:00:38.319Z INFO pilot-hosted-2026-10-15-0004 run 38798304535: completed
+2026-10-15T20:00:40.754Z INFO pilot-hosted-2026-10-15-0004 baseline run 38798304535: success, stages 34.091 s, job 60.0 s, queue 2.0 s
+2026-10-15T20:00:41.360Z INFO pause 57 s
+2026-10-15T20:01:41.826Z INFO pilot-hosted-2026-10-15-0005 sign dispatched: run 38798621314, block 2, position 5
+2026-10-15T20:01:42.258Z INFO pilot-hosted-2026-10-15-0005 run 38798621314: queued
+2026-10-15T20:01:52.677Z INFO pilot-hosted-2026-10-15-0005 run 38798621314: in_progress
+2026-10-15T20:03:05.849Z INFO pilot-hosted-2026-10-15-0005 run 38798621314: completed
+2026-10-15T20:03:08.285Z INFO pilot-hosted-2026-10-15-0005 sign run 38798621314: success, stages 47.691 s, job 76.0 s, queue 3.0 s
+2026-10-15T20:03:08.967Z INFO pause 57 s
+2026-10-15T20:04:09.855Z INFO pilot-hosted-2026-10-15-0006 sign dispatched: run 38798956180, block 3, position 6
+2026-10-15T20:04:10.215Z INFO pilot-hosted-2026-10-15-0006 run 38798956180: queued
+2026-10-15T20:04:20.662Z INFO pilot-hosted-2026-10-15-0006 run 38798956180: in_progress
+2026-10-15T20:05:23.246Z INFO pilot-hosted-2026-10-15-0006 run 38798956180: completed
+2026-10-15T20:05:25.688Z INFO pilot-hosted-2026-10-15-0006 sign run 38798956180: success, stages 44.911 s, job 66.0 s, queue 2.0 s
+2026-10-15T20:05:26.379Z INFO pause 57 s
+2026-10-15T20:06:27.484Z INFO pilot-hosted-2026-10-15-0007 baseline dispatched: run 38799267307, block 3, position 7
+2026-10-15T20:06:28.048Z INFO pilot-hosted-2026-10-15-0007 run 38799267307: queued
+2026-10-15T20:06:38.483Z INFO pilot-hosted-2026-10-15-0007 run 38799267307: in_progress
+2026-10-15T20:08:01.850Z INFO pilot-hosted-2026-10-15-0007 run 38799267307: completed
+2026-10-15T20:08:04.526Z INFO pilot-hosted-2026-10-15-0007 baseline run 38799267307: success, stages 45.118 s, job 88.0 s, queue 3.0 s
+2026-10-15T20:08:05.237Z INFO pause 57 s
+2026-10-15T20:09:06.177Z INFO pilot-hosted-2026-10-15-0008 sign dispatched: run 38799622802, block 4, position 8
+2026-10-15T20:09:06.668Z INFO pilot-hosted-2026-10-15-0008 run 38799622802: queued
+2026-10-15T20:09:17.131Z INFO pilot-hosted-2026-10-15-0008 run 38799622802: in_progress
+2026-10-15T20:10:19.660Z INFO pilot-hosted-2026-10-15-0008 run 38799622802: completed
+2026-10-15T20:10:22.247Z INFO pilot-hosted-2026-10-15-0008 sign run 38799622802: success, stages 43.462 s, job 66.0 s, queue 3.0 s
+2026-10-15T20:10:23.079Z INFO pause 57 s
+2026-10-15T20:11:23.891Z INFO pilot-hosted-2026-10-15-0009 baseline dispatched: run 38799923054, block 4, position 9
+2026-10-15T20:11:24.230Z INFO pilot-hosted-2026-10-15-0009 run 38799923054: queued
+2026-10-15T20:11:34.643Z INFO pilot-hosted-2026-10-15-0009 run 38799923054: in_progress
+2026-10-15T20:12:36.980Z INFO pilot-hosted-2026-10-15-0009 run 38799923054: completed
+2026-10-15T20:12:39.279Z INFO pilot-hosted-2026-10-15-0009 baseline run 38799923054: success, stages 39.263 s, job 65.0 s, queue 3.0 s
+2026-10-15T20:12:40.018Z INFO pause 57 s
+2026-10-15T20:13:40.671Z INFO pilot-hosted-2026-10-15-0010 baseline dispatched: run 38800220976, block 5, position 10
+2026-10-15T20:13:41.010Z INFO pilot-hosted-2026-10-15-0010 run 38800220976: queued
+2026-10-15T20:13:51.420Z INFO pilot-hosted-2026-10-15-0010 run 38800220976: in_progress
+2026-10-15T20:15:25.552Z INFO pilot-hosted-2026-10-15-0010 run 38800220976: completed
+2026-10-15T20:15:28.203Z INFO pilot-hosted-2026-10-15-0010 baseline run 38800220976: success, stages 41.361 s, job 92.0 s, queue 3.0 s
+2026-10-15T20:15:29.023Z INFO pause 57 s
+2026-10-15T20:16:29.888Z INFO pilot-hosted-2026-10-15-0011 sign dispatched: run 38800600104, block 5, position 11
+2026-10-15T20:16:30.350Z INFO pilot-hosted-2026-10-15-0011 run 38800600104: queued
+2026-10-15T20:16:40.754Z INFO pilot-hosted-2026-10-15-0011 run 38800600104: in_progress
+2026-10-15T20:18:04.147Z INFO pilot-hosted-2026-10-15-0011 run 38800600104: completed
+2026-10-15T20:18:06.745Z INFO pilot-hosted-2026-10-15-0011 sign run 38800600104: success, stages 49.477 s, job 79.0 s, queue 3.0 s
+2026-10-15T20:18:07.896Z INFO pause 56 s
+2026-10-15T20:19:08.102Z INFO pilot-hosted-2026-10-15-0012 sign dispatched: run 38800950809, block 6, position 12
+2026-10-15T20:19:08.522Z INFO pilot-hosted-2026-10-15-0012 run 38800950809: queued
+2026-10-15T20:19:18.904Z INFO pilot-hosted-2026-10-15-0012 run 38800950809: in_progress
+2026-10-15T20:20:21.629Z INFO pilot-hosted-2026-10-15-0012 run 38800950809: completed
+2026-10-15T20:20:24.383Z INFO pilot-hosted-2026-10-15-0012 sign run 38800950809: success, stages 44.467 s, job 67.0 s, queue 3.0 s
+2026-10-15T20:20:25.426Z INFO pause 56 s
+2026-10-15T20:21:25.650Z INFO pilot-hosted-2026-10-15-0013 baseline dispatched: run 38801264867, block 6, position 13
+2026-10-15T20:21:26.048Z INFO pilot-hosted-2026-10-15-0013 run 38801264867: queued
+2026-10-15T20:21:36.494Z INFO pilot-hosted-2026-10-15-0013 run 38801264867: in_progress
+2026-10-15T20:22:49.640Z INFO pilot-hosted-2026-10-15-0013 run 38801264867: completed
+2026-10-15T20:22:52.275Z INFO pilot-hosted-2026-10-15-0013 baseline run 38801264867: success, stages 40.693 s, job 67.0 s, queue 4.0 s
+2026-10-15T20:22:53.064Z INFO pause 57 s
+2026-10-15T20:23:53.254Z INFO pilot-hosted-2026-10-15-0014 baseline dispatched: run 38801600333, block 7, position 14
+2026-10-15T20:23:53.647Z INFO pilot-hosted-2026-10-15-0014 run 38801600333: queued
+2026-10-15T20:24:04.086Z INFO pilot-hosted-2026-10-15-0014 run 38801600333: in_progress
+2026-10-15T20:25:06.726Z INFO pilot-hosted-2026-10-15-0014 run 38801600333: completed
+2026-10-15T20:25:09.434Z INFO pilot-hosted-2026-10-15-0014 baseline run 38801600333: success, stages 39.578 s, job 61.0 s, queue 3.0 s
+2026-10-15T20:25:10.537Z INFO pause 56 s
+2026-10-15T20:26:11.197Z INFO pilot-hosted-2026-10-15-0015 sign dispatched: run 38801920568, block 7, position 15
+2026-10-15T20:26:11.666Z INFO pilot-hosted-2026-10-15-0015 run 38801920568: queued
+2026-10-15T20:26:22.262Z INFO pilot-hosted-2026-10-15-0015 run 38801920568: in_progress
+2026-10-15T20:27:35.071Z INFO pilot-hosted-2026-10-15-0015 run 38801920568: completed
+2026-10-15T20:27:37.603Z INFO pilot-hosted-2026-10-15-0015 sign run 38801920568: success, stages 41.307 s, job 74.0 s, queue 4.0 s
+2026-10-15T20:27:38.977Z INFO pause 56 s
+2026-10-15T20:28:38.721Z INFO pilot-hosted-2026-10-15-0016 baseline dispatched: run 38802249227, block 8, position 16
+2026-10-15T20:28:39.164Z INFO pilot-hosted-2026-10-15-0016 run 38802249227: queued
+2026-10-15T20:28:49.617Z INFO pilot-hosted-2026-10-15-0016 run 38802249227: in_progress
+2026-10-15T20:29:52.028Z INFO pilot-hosted-2026-10-15-0016 run 38802249227: completed
+2026-10-15T20:29:54.529Z INFO pilot-hosted-2026-10-15-0016 baseline run 38802249227: success, stages 36.049 s, job 64.0 s, queue 3.0 s
+2026-10-15T20:29:55.547Z INFO pause 56 s
+2026-10-15T20:30:55.911Z INFO pilot-hosted-2026-10-15-0017 sign dispatched: run 38802566382, block 8, position 17
+2026-10-15T20:30:56.302Z INFO pilot-hosted-2026-10-15-0017 run 38802566382: queued
+2026-10-15T20:31:06.799Z INFO pilot-hosted-2026-10-15-0017 run 38802566382: in_progress
+2026-10-15T20:32:09.085Z INFO pilot-hosted-2026-10-15-0017 run 38802566382: completed
+2026-10-15T20:32:11.512Z INFO pilot-hosted-2026-10-15-0017 sign run 38802566382: success, stages 36.230 s, job 65.0 s, queue 3.0 s
+2026-10-15T20:32:12.530Z INFO pause 57 s
+2026-10-15T20:33:12.551Z INFO pilot-hosted-2026-10-15-0018 sign dispatched: run 38802873182, block 9, position 18
+2026-10-15T20:33:13.200Z INFO pilot-hosted-2026-10-15-0018 run 38802873182: queued
+2026-10-15T20:33:23.686Z INFO pilot-hosted-2026-10-15-0018 run 38802873182: in_progress
+2026-10-15T20:34:26.095Z INFO pilot-hosted-2026-10-15-0018 run 38802873182: completed
+2026-10-15T20:34:28.483Z INFO pilot-hosted-2026-10-15-0018 sign run 38802873182: success, stages 42.686 s, job 67.0 s, queue 3.0 s
+2026-10-15T20:34:29.426Z INFO pause 57 s
+2026-10-15T20:35:29.801Z INFO pilot-hosted-2026-10-15-0019 baseline dispatched: run 38803190041, block 9, position 19
+2026-10-15T20:35:30.184Z INFO pilot-hosted-2026-10-15-0019 run 38803190041: queued
+2026-10-15T20:35:40.536Z INFO pilot-hosted-2026-10-15-0019 run 38803190041: in_progress
+2026-10-15T20:36:43.159Z INFO pilot-hosted-2026-10-15-0019 run 38803190041: completed
+2026-10-15T20:36:45.618Z INFO pilot-hosted-2026-10-15-0019 baseline run 38803190041: success, stages 41.791 s, job 65.0 s, queue 2.0 s
+2026-10-15T20:36:46.649Z INFO pause 57 s
+2026-10-15T20:37:46.890Z INFO pilot-hosted-2026-10-15-0020 baseline dispatched: run 38803491589, block 10, position 20
+2026-10-15T20:37:47.252Z INFO pilot-hosted-2026-10-15-0020 run 38803491589: queued
+2026-10-15T20:37:57.629Z INFO pilot-hosted-2026-10-15-0020 run 38803491589: in_progress
+2026-10-15T20:39:00.857Z INFO pilot-hosted-2026-10-15-0020 run 38803491589: completed
+2026-10-15T20:39:04.388Z INFO pilot-hosted-2026-10-15-0020 baseline run 38803491589: success, stages 35.018 s, job 65.0 s, queue 3.0 s
+2026-10-15T20:39:05.250Z INFO pause 56 s
+2026-10-15T20:40:04.525Z INFO pilot-hosted-2026-10-15-0021 sign dispatched: run 38803798112, block 10, position 21
+2026-10-15T20:40:04.932Z INFO pilot-hosted-2026-10-15-0021 run 38803798112: queued
+2026-10-15T20:40:15.303Z INFO pilot-hosted-2026-10-15-0021 run 38803798112: in_progress
+2026-10-15T20:41:38.796Z INFO pilot-hosted-2026-10-15-0021 run 38803798112: completed
+2026-10-15T20:41:41.099Z INFO pilot-hosted-2026-10-15-0021 sign run 38803798112: success, stages 53.617 s, job 78.0 s, queue 3.0 s
+2026-10-15T20:41:42.024Z INFO pause 57 s
+2026-10-15T20:42:42.993Z INFO pilot-hosted-2026-10-15-0022 sign dispatched: run 38804147772, block 11, position 22
+2026-10-15T20:42:43.400Z INFO pilot-hosted-2026-10-15-0022 run 38804147772: queued
+2026-10-15T20:42:53.750Z INFO pilot-hosted-2026-10-15-0022 run 38804147772: in_progress
+2026-10-15T20:44:17.307Z INFO pilot-hosted-2026-10-15-0022 run 38804147772: completed
+2026-10-15T20:44:19.643Z INFO pilot-hosted-2026-10-15-0022 sign run 38804147772: success, stages 46.635 s, job 84.0 s, queue 3.0 s
+2026-10-15T20:44:21.092Z INFO pause 56 s
+2026-10-15T20:45:21.189Z INFO pilot-hosted-2026-10-15-0023 baseline dispatched: run 38804502529, block 11, position 23
+2026-10-15T20:45:21.609Z INFO pilot-hosted-2026-10-15-0023 run 38804502529: queued
+2026-10-15T20:45:32.054Z INFO pilot-hosted-2026-10-15-0023 run 38804502529: in_progress
+2026-10-15T20:46:34.642Z INFO pilot-hosted-2026-10-15-0023 run 38804502529: completed
+2026-10-15T20:46:37.018Z INFO pilot-hosted-2026-10-15-0023 baseline run 38804502529: success, stages 35.177 s, job 64.0 s, queue 3.0 s
+2026-10-15T20:46:38.430Z INFO pause 56 s
+2026-10-15T20:47:38.520Z INFO pilot-hosted-2026-10-15-0024 sign dispatched: run 38804803498, block 12, position 24
+2026-10-15T20:47:38.856Z INFO pilot-hosted-2026-10-15-0024 run 38804803498: queued
+2026-10-15T20:47:49.201Z INFO pilot-hosted-2026-10-15-0024 run 38804803498: in_progress
+2026-10-15T20:49:02.208Z INFO pilot-hosted-2026-10-15-0024 run 38804803498: completed
+2026-10-15T20:49:04.544Z INFO pilot-hosted-2026-10-15-0024 sign run 38804803498: success, stages 47.419 s, job 70.0 s, queue 3.0 s
+2026-10-15T20:49:05.535Z INFO pause 57 s
+2026-10-15T20:50:06.489Z INFO pilot-hosted-2026-10-15-0025 baseline dispatched: run 38805128611, block 12, position 25
+2026-10-15T20:50:06.818Z INFO pilot-hosted-2026-10-15-0025 run 38805128611: queued
+2026-10-15T20:50:17.445Z INFO pilot-hosted-2026-10-15-0025 run 38805128611: in_progress
+2026-10-15T20:51:19.966Z INFO pilot-hosted-2026-10-15-0025 run 38805128611: completed
+2026-10-15T20:51:22.319Z INFO pilot-hosted-2026-10-15-0025 baseline run 38805128611: success, stages 40.403 s, job 67.0 s, queue 4.0 s
+2026-10-15T20:51:23.427Z INFO pause 57 s
+2026-10-15T20:52:23.775Z INFO pilot-hosted-2026-10-15-0026 baseline dispatched: run 38805437883, block 13, position 26
+2026-10-15T20:52:24.217Z INFO pilot-hosted-2026-10-15-0026 run 38805437883: queued
+2026-10-15T20:52:34.651Z INFO pilot-hosted-2026-10-15-0026 run 38805437883: in_progress
+2026-10-15T20:53:47.703Z INFO pilot-hosted-2026-10-15-0026 run 38805437883: completed
+2026-10-15T20:53:50.116Z INFO pilot-hosted-2026-10-15-0026 baseline run 38805437883: success, stages 43.866 s, job 74.0 s, queue 3.0 s
+2026-10-15T20:53:51.468Z INFO pause 56 s
+2026-10-15T20:54:51.843Z INFO pilot-hosted-2026-10-15-0027 sign dispatched: run 38805765417, block 13, position 27
+2026-10-15T20:54:52.248Z INFO pilot-hosted-2026-10-15-0027 run 38805765417: queued
+2026-10-15T20:55:02.689Z INFO pilot-hosted-2026-10-15-0027 run 38805765417: in_progress
+2026-10-15T20:56:15.722Z INFO pilot-hosted-2026-10-15-0027 run 38805765417: completed
+2026-10-15T20:56:18.158Z INFO pilot-hosted-2026-10-15-0027 sign run 38805765417: success, stages 46.621 s, job 74.0 s, queue 3.0 s
+2026-10-15T20:56:19.357Z INFO pause 56 s
+2026-10-15T20:57:19.696Z INFO pilot-hosted-2026-10-15-0028 sign dispatched: run 38806089119, block 14, position 28
+2026-10-15T20:57:20.047Z INFO pilot-hosted-2026-10-15-0028 run 38806089119: queued
+2026-10-15T20:57:30.463Z INFO pilot-hosted-2026-10-15-0028 run 38806089119: in_progress
+2026-10-15T20:58:33.353Z INFO pilot-hosted-2026-10-15-0028 run 38806089119: completed
+2026-10-15T20:58:37.469Z INFO pilot-hosted-2026-10-15-0028 sign run 38806089119: success, stages 44.988 s, job 65.0 s, queue 3.0 s
+2026-10-15T20:58:38.872Z INFO pause 54 s
+2026-10-15T20:59:37.296Z INFO pilot-hosted-2026-10-15-0029 baseline dispatched: run 38806380000, block 14, position 29
+2026-10-15T20:59:37.680Z INFO pilot-hosted-2026-10-15-0029 run 38806380000: queued
+2026-10-15T20:59:48.036Z INFO pilot-hosted-2026-10-15-0029 run 38806380000: in_progress
+2026-10-15T21:00:50.443Z INFO pilot-hosted-2026-10-15-0029 run 38806380000: completed
+2026-10-15T21:00:52.999Z INFO pilot-hosted-2026-10-15-0029 baseline run 38806380000: success, stages 35.824 s, job 66.0 s, queue 4.0 s
+2026-10-15T21:00:54.207Z INFO pause 56 s
+2026-10-15T21:01:54.616Z INFO pilot-hosted-2026-10-15-0030 baseline dispatched: run 38806693103, block 15, position 30
+2026-10-15T21:01:55.006Z INFO pilot-hosted-2026-10-15-0030 run 38806693103: queued
+2026-10-15T21:02:05.379Z INFO pilot-hosted-2026-10-15-0030 run 38806693103: in_progress
+2026-10-15T21:03:07.999Z INFO pilot-hosted-2026-10-15-0030 run 38806693103: completed
+2026-10-15T21:03:10.505Z INFO pilot-hosted-2026-10-15-0030 baseline run 38806693103: success, stages 40.903 s, job 66.0 s, queue 3.0 s
+2026-10-15T21:03:11.868Z INFO pause 56 s
+2026-10-15T21:04:11.863Z INFO pilot-hosted-2026-10-15-0031 sign dispatched: run 38807001184, block 15, position 31
+2026-10-15T21:04:12.374Z INFO pilot-hosted-2026-10-15-0031 run 38807001184: queued
+2026-10-15T21:04:22.702Z INFO pilot-hosted-2026-10-15-0031 run 38807001184: in_progress
+2026-10-15T21:05:35.929Z INFO pilot-hosted-2026-10-15-0031 run 38807001184: completed
+2026-10-15T21:05:38.416Z INFO pilot-hosted-2026-10-15-0031 sign run 38807001184: success, stages 44.514 s, job 72.0 s, queue 3.0 s
+2026-10-15T21:05:40.142Z INFO pause 56 s
+2026-10-15T21:06:40.343Z INFO pilot-hosted-2026-10-15-0032 sign dispatched: run 38807328992, block 16, position 32
+2026-10-15T21:06:40.990Z INFO pilot-hosted-2026-10-15-0032 run 38807328992: queued
+2026-10-15T21:06:51.401Z INFO pilot-hosted-2026-10-15-0032 run 38807328992: in_progress
+2026-10-15T21:07:53.871Z INFO pilot-hosted-2026-10-15-0032 run 38807328992: completed
+2026-10-15T21:07:56.306Z INFO pilot-hosted-2026-10-15-0032 sign run 38807328992: success, stages 43.224 s, job 66.0 s, queue 3.0 s
+2026-10-15T21:07:57.814Z INFO pause 56 s
+2026-10-15T21:08:58.842Z INFO pilot-hosted-2026-10-15-0033 baseline dispatched: run 38807623762, block 16, position 33
+2026-10-15T21:08:59.254Z INFO pilot-hosted-2026-10-15-0033 run 38807623762: queued
+2026-10-15T21:09:09.760Z INFO pilot-hosted-2026-10-15-0033 run 38807623762: in_progress
+2026-10-15T21:10:24.292Z INFO pilot-hosted-2026-10-15-0033 run 38807623762: completed
+2026-10-15T21:10:26.752Z INFO pilot-hosted-2026-10-15-0033 baseline run 38807623762: success, stages 40.746 s, job 69.0 s, queue 3.0 s
+2026-10-15T21:10:28.960Z INFO pause 55 s
+2026-10-15T21:11:28.069Z INFO pilot-hosted-2026-10-15-0034 sign dispatched: run 38807946630, block 17, position 34
+2026-10-15T21:11:28.491Z INFO pilot-hosted-2026-10-15-0034 run 38807946630: queued
+2026-10-15T21:11:38.942Z INFO pilot-hosted-2026-10-15-0034 run 38807946630: in_progress
+2026-10-15T21:12:51.818Z INFO pilot-hosted-2026-10-15-0034 run 38807946630: completed
+2026-10-15T21:12:54.098Z INFO pilot-hosted-2026-10-15-0034 sign run 38807946630: success, stages 46.766 s, job 75.0 s, queue 4.0 s
+2026-10-15T21:12:55.637Z INFO pause 56 s
+2026-10-15T21:13:56.352Z INFO pilot-hosted-2026-10-15-0035 baseline dispatched: run 38808266512, block 17, position 35
+2026-10-15T21:13:56.833Z INFO pilot-hosted-2026-10-15-0035 run 38808266512: queued
+2026-10-15T21:14:07.248Z INFO pilot-hosted-2026-10-15-0035 run 38808266512: in_progress
+2026-10-15T21:15:20.609Z INFO pilot-hosted-2026-10-15-0035 run 38808266512: completed
+2026-10-15T21:15:23.050Z INFO pilot-hosted-2026-10-15-0035 baseline run 38808266512: success, stages 43.697 s, job 71.0 s, queue 3.0 s
+2026-10-15T21:15:24.756Z INFO pause 56 s
+2026-10-15T21:16:24.625Z INFO pilot-hosted-2026-10-15-0036 sign dispatched: run 38808589406, block 18, position 36
+2026-10-15T21:16:24.966Z INFO pilot-hosted-2026-10-15-0036 run 38808589406: queued
+2026-10-15T21:16:35.379Z INFO pilot-hosted-2026-10-15-0036 run 38808589406: in_progress
+2026-10-15T21:17:37.840Z INFO pilot-hosted-2026-10-15-0036 run 38808589406: completed
+2026-10-15T21:17:40.311Z INFO pilot-hosted-2026-10-15-0036 sign run 38808589406: success, stages 44.005 s, job 63.0 s, queue 4.0 s
+2026-10-15T21:17:41.460Z INFO pause 56 s
+2026-10-15T21:18:41.718Z INFO pilot-hosted-2026-10-15-0037 baseline dispatched: run 38808886216, block 18, position 37
+2026-10-15T21:18:42.147Z INFO pilot-hosted-2026-10-15-0037 run 38808886216: queued
+2026-10-15T21:18:52.478Z INFO pilot-hosted-2026-10-15-0037 run 38808886216: in_progress
+2026-10-15T21:19:54.851Z INFO pilot-hosted-2026-10-15-0037 run 38808886216: completed
+2026-10-15T21:19:57.224Z INFO pilot-hosted-2026-10-15-0037 baseline run 38808886216: success, stages 40.967 s, job 65.0 s, queue 3.0 s
+2026-10-15T21:19:58.886Z INFO pause 56 s
+2026-10-15T21:20:58.942Z INFO pilot-hosted-2026-10-15-0038 baseline dispatched: run 38809178931, block 19, position 38
+2026-10-15T21:20:59.363Z INFO pilot-hosted-2026-10-15-0038 run 38809178931: queued
+2026-10-15T21:21:09.808Z INFO pilot-hosted-2026-10-15-0038 run 38809178931: in_progress
+2026-10-15T21:22:12.280Z INFO pilot-hosted-2026-10-15-0038 run 38809178931: completed
+2026-10-15T21:22:14.632Z INFO pilot-hosted-2026-10-15-0038 baseline run 38809178931: success, stages 37.676 s, job 64.0 s, queue 3.0 s
+2026-10-15T21:22:15.960Z INFO pause 56 s
+2026-10-15T21:23:16.276Z INFO pilot-hosted-2026-10-15-0039 sign dispatched: run 38809464150, block 19, position 39
+2026-10-15T21:23:16.784Z INFO pilot-hosted-2026-10-15-0039 run 38809464150: queued
+2026-10-15T21:23:27.229Z INFO pilot-hosted-2026-10-15-0039 run 38809464150: in_progress
+2026-10-15T21:24:40.151Z INFO pilot-hosted-2026-10-15-0039 run 38809464150: completed
+2026-10-15T21:24:42.566Z INFO pilot-hosted-2026-10-15-0039 sign run 38809464150: success, stages 47.865 s, job 75.0 s, queue 3.0 s
+2026-10-15T21:24:43.988Z INFO pause 56 s
+2026-10-15T21:25:44.142Z INFO pilot-hosted-2026-10-15-0040 baseline dispatched: run 38809780456, block 20, position 40
+2026-10-15T21:25:44.573Z INFO pilot-hosted-2026-10-15-0040 run 38809780456: queued
+2026-10-15T21:25:55.198Z INFO pilot-hosted-2026-10-15-0040 run 38809780456: in_progress
+2026-10-15T21:26:47.215Z INFO pilot-hosted-2026-10-15-0040 run 38809780456: completed
+2026-10-15T21:26:49.930Z INFO pilot-hosted-2026-10-15-0040 baseline run 38809780456: success, stages 29.641 s, job 58.0 s, queue 3.0 s
+2026-10-15T21:26:51.276Z INFO pause 56 s
+2026-10-15T21:27:51.114Z INFO pilot-hosted-2026-10-15-0041 sign dispatched: run 38810051638, block 20, position 41
+2026-10-15T21:27:51.477Z INFO pilot-hosted-2026-10-15-0041 run 38810051638: queued
+2026-10-15T21:28:01.964Z INFO pilot-hosted-2026-10-15-0041 run 38810051638: in_progress
+2026-10-15T21:29:25.423Z INFO pilot-hosted-2026-10-15-0041 run 38810051638: completed
+2026-10-15T21:29:27.959Z INFO pilot-hosted-2026-10-15-0041 sign run 38810051638: success, stages 53.013 s, job 85.0 s, queue 3.0 s
+2026-10-15T21:29:29.629Z INFO pause 56 s
+2026-10-15T21:30:29.322Z INFO pilot-hosted-2026-10-15-0042 baseline dispatched: run 38810391158, block 21, position 42
+2026-10-15T21:30:29.729Z INFO pilot-hosted-2026-10-15-0042 run 38810391158: queued
+2026-10-15T21:30:40.256Z INFO pilot-hosted-2026-10-15-0042 run 38810391158: in_progress
+2026-10-15T21:31:42.759Z INFO pilot-hosted-2026-10-15-0042 run 38810391158: completed
+2026-10-15T21:31:45.271Z INFO pilot-hosted-2026-10-15-0042 baseline run 38810391158: success, stages 36.110 s, job 67.0 s, queue 3.0 s
+2026-10-15T21:31:47.125Z INFO pause 56 s
+2026-10-15T21:32:46.669Z INFO pilot-hosted-2026-10-15-0043 sign dispatched: run 38810685160, block 21, position 43
+2026-10-15T21:32:47.001Z INFO pilot-hosted-2026-10-15-0043 run 38810685160: queued
+2026-10-15T21:32:57.493Z INFO pilot-hosted-2026-10-15-0043 run 38810685160: in_progress
+2026-10-15T21:34:20.958Z INFO pilot-hosted-2026-10-15-0043 run 38810685160: completed
+2026-10-15T21:34:23.616Z INFO pilot-hosted-2026-10-15-0043 sign run 38810685160: success, stages 43.820 s, job 79.0 s, queue 3.0 s
+2026-10-15T21:34:25.163Z INFO pause 56 s
+2026-10-15T21:35:24.694Z INFO pilot-hosted-2026-10-15-0044 sign dispatched: run 38811029439, block 22, position 44
+2026-10-15T21:35:25.111Z INFO pilot-hosted-2026-10-15-0044 run 38811029439: queued
+2026-10-15T21:35:35.483Z INFO pilot-hosted-2026-10-15-0044 run 38811029439: in_progress
+2026-10-15T21:36:38.284Z INFO pilot-hosted-2026-10-15-0044 run 38811029439: completed
+2026-10-15T21:36:40.837Z INFO pilot-hosted-2026-10-15-0044 sign run 38811029439: success, stages 33.751 s, job 61.0 s, queue 3.0 s
+2026-10-15T21:36:42.574Z INFO pause 56 s
+2026-10-15T21:37:41.940Z INFO pilot-hosted-2026-10-15-0045 baseline dispatched: run 38811307996, block 22, position 45
+2026-10-15T21:37:42.269Z INFO pilot-hosted-2026-10-15-0045 run 38811307996: queued
+2026-10-15T21:37:52.708Z INFO pilot-hosted-2026-10-15-0045 run 38811307996: in_progress
+2026-10-15T21:38:55.327Z INFO pilot-hosted-2026-10-15-0045 run 38811307996: completed
+2026-10-15T21:38:58.006Z INFO pilot-hosted-2026-10-15-0045 baseline run 38811307996: success, stages 38.879 s, job 60.0 s, queue 2.0 s
+2026-10-15T21:38:59.986Z INFO pause 55 s
+2026-10-15T21:39:59.254Z INFO pilot-hosted-2026-10-15-0046 baseline dispatched: run 38811587333, block 23, position 46
+2026-10-15T21:39:59.598Z INFO pilot-hosted-2026-10-15-0046 run 38811587333: queued
+2026-10-15T21:40:10.047Z INFO pilot-hosted-2026-10-15-0046 run 38811587333: in_progress
+2026-10-15T21:41:12.509Z INFO pilot-hosted-2026-10-15-0046 run 38811587333: completed
+2026-10-15T21:41:14.883Z INFO pilot-hosted-2026-10-15-0046 baseline run 38811587333: success, stages 37.775 s, job 59.0 s, queue 3.0 s
+2026-10-15T21:41:16.302Z INFO pause 56 s
+2026-10-15T21:42:16.720Z INFO pilot-hosted-2026-10-15-0047 sign dispatched: run 38811872093, block 23, position 47
+2026-10-15T21:42:17.131Z INFO pilot-hosted-2026-10-15-0047 run 38811872093: queued
+2026-10-15T21:42:27.484Z INFO pilot-hosted-2026-10-15-0047 run 38811872093: in_progress
+2026-10-15T21:43:40.282Z INFO pilot-hosted-2026-10-15-0047 run 38811872093: completed
+2026-10-15T21:43:42.799Z INFO pilot-hosted-2026-10-15-0047 sign run 38811872093: success, stages 43.117 s, job 70.0 s, queue 3.0 s
+2026-10-15T21:43:44.434Z INFO pause 56 s
+2026-10-15T21:44:44.070Z INFO pilot-hosted-2026-10-15-0048 sign dispatched: run 38812175223, block 24, position 48
+2026-10-15T21:44:44.460Z INFO pilot-hosted-2026-10-15-0048 run 38812175223: queued
+2026-10-15T21:44:54.951Z INFO pilot-hosted-2026-10-15-0048 run 38812175223: in_progress
+2026-10-15T21:46:08.270Z INFO pilot-hosted-2026-10-15-0048 run 38812175223: completed
+2026-10-15T21:46:10.709Z INFO pilot-hosted-2026-10-15-0048 sign run 38812175223: success, stages 44.349 s, job 76.0 s, queue 4.0 s
+2026-10-15T21:46:12.452Z INFO pause 56 s
+2026-10-15T21:47:12.099Z INFO pilot-hosted-2026-10-15-0049 baseline dispatched: run 38812480582, block 24, position 49
+2026-10-15T21:47:12.453Z INFO pilot-hosted-2026-10-15-0049 run 38812480582: queued
+2026-10-15T21:47:22.789Z INFO pilot-hosted-2026-10-15-0049 run 38812480582: in_progress
+2026-10-15T21:48:25.217Z INFO pilot-hosted-2026-10-15-0049 run 38812480582: completed
+2026-10-15T21:48:27.589Z INFO pilot-hosted-2026-10-15-0049 baseline run 38812480582: success, stages 34.350 s, job 62.0 s, queue 3.0 s
+2026-10-15T21:48:29.335Z INFO pause 56 s
+2026-10-15T21:49:28.845Z INFO pilot-hosted-2026-10-15-0050 baseline dispatched: run 38812756573, block 25, position 50
+2026-10-15T21:49:29.224Z INFO pilot-hosted-2026-10-15-0050 run 38812756573: queued
+2026-10-15T21:49:39.568Z INFO pilot-hosted-2026-10-15-0050 run 38812756573: in_progress
+2026-10-15T21:50:41.826Z INFO pilot-hosted-2026-10-15-0050 run 38812756573: completed
+2026-10-15T21:50:44.208Z INFO pilot-hosted-2026-10-15-0050 baseline run 38812756573: success, stages 38.404 s, job 62.0 s, queue 2.0 s
+2026-10-15T21:50:45.674Z INFO pause 56 s
+2026-10-15T21:51:45.928Z INFO pilot-hosted-2026-10-15-0051 sign dispatched: run 38813032699, block 25, position 51
+2026-10-15T21:51:46.384Z INFO pilot-hosted-2026-10-15-0051 run 38813032699: queued
+2026-10-15T21:51:56.739Z INFO pilot-hosted-2026-10-15-0051 run 38813032699: in_progress
+2026-10-15T21:53:09.327Z INFO pilot-hosted-2026-10-15-0051 run 38813032699: completed
+2026-10-15T21:53:12.092Z INFO pilot-hosted-2026-10-15-0051 sign run 38813032699: success, stages 47.157 s, job 72.0 s, queue 3.0 s
+2026-10-15T21:53:14.367Z INFO pause 55 s
+2026-10-15T21:54:13.182Z INFO pilot-hosted-2026-10-15-0052 sign dispatched: run 38813329970, block 26, position 52
+2026-10-15T21:54:13.725Z INFO pilot-hosted-2026-10-15-0052 run 38813329970: queued
+2026-10-15T21:54:24.070Z INFO pilot-hosted-2026-10-15-0052 run 38813329970: in_progress
+2026-10-15T21:55:36.797Z INFO pilot-hosted-2026-10-15-0052 run 38813329970: completed
+2026-10-15T21:55:39.355Z INFO pilot-hosted-2026-10-15-0052 sign run 38813329970: success, stages 53.730 s, job 78.0 s, queue 3.0 s
+2026-10-15T21:55:41.230Z INFO pause 56 s
+2026-10-15T21:56:40.464Z INFO pilot-hosted-2026-10-15-0053 baseline dispatched: run 38813616964, block 26, position 53
+2026-10-15T21:56:40.896Z INFO pilot-hosted-2026-10-15-0053 run 38813616964: queued
+2026-10-15T21:56:51.344Z INFO pilot-hosted-2026-10-15-0053 run 38813616964: in_progress
+2026-10-15T21:57:53.597Z INFO pilot-hosted-2026-10-15-0053 run 38813616964: completed
+2026-10-15T21:57:55.862Z INFO pilot-hosted-2026-10-15-0053 baseline run 38813616964: success, stages 40.921 s, job 66.0 s, queue 3.0 s
+2026-10-15T21:57:57.422Z INFO pause 56 s
+2026-10-15T21:58:57.290Z INFO pilot-hosted-2026-10-15-0054 sign dispatched: run 38813884895, block 27, position 54
+2026-10-15T21:58:57.618Z INFO pilot-hosted-2026-10-15-0054 run 38813884895: queued
+2026-10-15T21:59:07.985Z INFO pilot-hosted-2026-10-15-0054 run 38813884895: in_progress
+2026-10-15T22:00:20.752Z INFO pilot-hosted-2026-10-15-0054 run 38813884895: completed
+2026-10-15T22:00:23.123Z INFO pilot-hosted-2026-10-15-0054 sign run 38813884895: success, stages 47.645 s, job 77.0 s, queue 3.0 s
+2026-10-15T22:00:24.823Z INFO pause 56 s
+2026-10-15T22:01:24.547Z INFO pilot-hosted-2026-10-15-0055 baseline dispatched: run 38814190160, block 27, position 55
+2026-10-15T22:01:24.958Z INFO pilot-hosted-2026-10-15-0055 run 38814190160: queued
+2026-10-15T22:01:35.335Z INFO pilot-hosted-2026-10-15-0055 run 38814190160: in_progress
+2026-10-15T22:02:37.794Z INFO pilot-hosted-2026-10-15-0055 run 38814190160: completed
+2026-10-15T22:02:40.052Z INFO pilot-hosted-2026-10-15-0055 baseline run 38814190160: success, stages 39.051 s, job 59.0 s, queue 3.0 s
+2026-10-15T22:02:41.602Z INFO pause 56 s
+2026-10-15T22:03:41.255Z INFO pilot-hosted-2026-10-15-0056 sign dispatched: run 38814463892, block 28, position 56
+2026-10-15T22:03:41.611Z INFO pilot-hosted-2026-10-15-0056 run 38814463892: queued
+2026-10-15T22:03:52.212Z INFO pilot-hosted-2026-10-15-0056 run 38814463892: in_progress
+2026-10-15T22:05:05.098Z INFO pilot-hosted-2026-10-15-0056 run 38814463892: completed
+2026-10-15T22:05:07.403Z INFO pilot-hosted-2026-10-15-0056 sign run 38814463892: success, stages 41.445 s, job 74.0 s, queue 3.0 s
+2026-10-15T22:05:09.710Z INFO pause 55 s
+2026-10-15T22:06:08.905Z INFO pilot-hosted-2026-10-15-0057 baseline dispatched: run 38814762743, block 28, position 57
+2026-10-15T22:06:09.331Z INFO pilot-hosted-2026-10-15-0057 run 38814762743: queued
+2026-10-15T22:06:19.658Z INFO pilot-hosted-2026-10-15-0057 run 38814762743: in_progress
+2026-10-15T22:07:22.034Z INFO pilot-hosted-2026-10-15-0057 run 38814762743: completed
+2026-10-15T22:07:24.233Z INFO pilot-hosted-2026-10-15-0057 baseline run 38814762743: success, stages 40.039 s, job 67.0 s, queue 3.0 s
+2026-10-15T22:07:26.247Z INFO pause 56 s
+2026-10-15T22:08:25.790Z INFO pilot-hosted-2026-10-15-0058 baseline dispatched: run 38815024508, block 29, position 58
+2026-10-15T22:08:26.240Z INFO pilot-hosted-2026-10-15-0058 run 38815024508: queued
+2026-10-15T22:08:36.683Z INFO pilot-hosted-2026-10-15-0058 run 38815024508: in_progress
+2026-10-15T22:09:49.650Z INFO pilot-hosted-2026-10-15-0058 run 38815024508: completed
+2026-10-15T22:09:52.081Z INFO pilot-hosted-2026-10-15-0058 baseline run 38815024508: success, stages 44.375 s, job 71.0 s, queue 3.0 s
+2026-10-15T22:09:54.415Z INFO pause 55 s
+2026-10-15T22:10:53.595Z INFO pilot-hosted-2026-10-15-0059 sign dispatched: run 38815315017, block 29, position 59
+2026-10-15T22:10:54.007Z INFO pilot-hosted-2026-10-15-0059 run 38815315017: queued
+2026-10-15T22:11:04.448Z INFO pilot-hosted-2026-10-15-0059 run 38815315017: in_progress
+2026-10-15T22:12:28.041Z INFO pilot-hosted-2026-10-15-0059 run 38815315017: completed
+2026-10-15T22:12:30.491Z INFO pilot-hosted-2026-10-15-0059 sign run 38815315017: success, stages 54.863 s, job 84.0 s, queue 3.0 s
+2026-10-15T22:12:30.491Z INFO campaign pilot-hosted-2026-10-15 finished

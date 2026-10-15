@@ -1,0 +1,732 @@
+{
+  "schema_version": 1,
+  "campaign": {
+    "id": "pilot-hosted-2026-10-15",
+    "kind": "pilot",
+    "plan_sha256": "89aafcd15a8bf88374bfb883d05ad153bb953b432eac16e36c25240866133401",
+    "order_sha256": "316eb9e3ae74622171c4cb47de8340f1348a6747b6e6b4298fa5b91f42f7ad82",
+    "seed": 236991098,
+    "repo_commit": "e6a451ac96fca61caa7de00ebe1ef8d068671137"
+  },
+  "run": {
+    "correlation_id": "pilot-hosted-2026-10-15-0003",
+    "workflow": ".github/workflows/measure.yml",
+    "ref": "main",
+    "dispatched_at": "2026-10-15T19:57:06.336171Z",
+    "dispatch_response": {
+      "workflow_run_id": 38798011447,
+      "run_url": "https://api.github.com/repos/vermout94/mcs-pipeline/actions/runs/38798011447",
+      "html_url": "https://github.com/vermout94/mcs-pipeline/actions/runs/38798011447"
+    },
+    "run_id": 38798011447,
+    "run_attempt": 1,
+    "head_sha": "e6a451ac96fca61caa7de00ebe1ef8d068671137",
+    "display_title": "measure pilot-hosted-2026-10-15-0003 runner=hosted sbom=false sign=false provenance=false policy=false",
+    "html_url": "https://github.com/vermout94/mcs-pipeline/actions/runs/38798011447",
+    "matched_by": [
+      "dispatch_response",
+      "run_name",
+      "artifact"
+    ],
+    "artifact": {
+      "name": "measure-pilot-hosted-2026-10-15-0003",
+      "id": 12003136227,
+      "size_in_bytes": 19720,
+      "digest": "sha256:2e33d3724a7fae3d97e51ad27a553bfde87b0449e0c1375ddcd106020b6fb980",
+      "sha256": "2e33d3724a7fae3d97e51ad27a553bfde87b0449e0c1375ddcd106020b6fb980",
+      "path": "artifacts/measure-pilot-hosted-2026-10-15-0003.zip",
+      "expires_at": "2027-01-13T19:57:08Z"
+    },
+    "job_log": null
+  },
+  "design": {
+    "configuration": "baseline",
+    "cell": 0,
+    "factors": {
+      "sbom": false,
+      "sign": false,
+      "provenance": false,
+      "policy": false
+    },
+    "slsa_configuration": null,
+    "block": 1,
+    "position_in_block": 1,
+    "position_in_campaign": 3,
+    "first_runs": false,
+    "ground_truth_variant": null
+  },
+  "environment": {
+    "type": "hosted",
+    "runner": {
+      "name": "GitHub Actions 1000000009",
+      "version": "2.337.0",
+      "os": "Linux",
+      "arch": "X64",
+      "environment": "github-hosted",
+      "group": "GitHub Actions",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "image_os": "ubuntu24",
+      "image_version": "20261012.334.1"
+    },
+    "cpu": {
+      "model": "AMD EPYC 9V45 96-Core Processor",
+      "logical_cores": 4,
+      "affinity_cores": 4,
+      "flags_sha256": "8b121906e9c6517167bd2f2acc769fbdd0ea135b2e7c3d6e9c906773128b2e52"
+    },
+    "memory_bytes": 16766414848,
+    "kernel": "6.17.0-1022-azure",
+    "kernel_version": "#22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026",
+    "os": "Ubuntu 24.04.5 LTS",
+    "docker": {
+      "server_version": "28.0.4",
+      "storage_driver": "overlay2",
+      "cgroup_driver": "systemd",
+      "default_runtime": "runc"
+    },
+    "vm": null
+  },
+  "clock": {
+    "stage_clock": "CLOCK_MONOTONIC",
+    "stage_clock_resolution_ns": 1,
+    "wall_clock": "CLOCK_REALTIME",
+    "clocksource": "tsc",
+    "api_resolution_s": 1
+  },
+  "versions": {
+    "versions_json_sha256": "b58cb1da24af83b1dd01107535e38ea621facdb63bffc595a2c09d34ea99b3de",
+    "tools": [
+      {
+        "name": "cosign",
+        "pinned_version": "v3.1.3",
+        "sha256": "4629c757b7618056f8ddd7e2625ae9fdd94c0372a65049520bc7d9df9efc7f71",
+        "reported_version": "v3.1.3"
+      },
+      {
+        "name": "syft",
+        "pinned_version": "v1.54.1",
+        "sha256": "c069905b391cc4c20a5ba65ad5c10be2a7ba074f8ea6ad203e24d14e303dad47",
+        "reported_version": "1.54.1"
+      },
+      {
+        "name": "grype",
+        "pinned_version": "v0.120.1",
+        "sha256": "0a9ee97ef5ae2ee953b0a80098105052e846cdbe319a57d808b519c33cd1343d",
+        "reported_version": "0.120.1"
+      },
+      {
+        "name": "opa",
+        "pinned_version": "v1.21.1",
+        "sha256": "668506eb17a2eaa1fce6cc0d1f42ef85125d4ac5bda5fc74d1152d0c77145031",
+        "reported_version": "Version: 1.21.1"
+      },
+      {
+        "name": "conftest",
+        "pinned_version": "v0.71.1",
+        "sha256": "c3f6b2a753bd56e377a1e51a95ae3e057f926f2e9139f7d5b5dfbbaf810f7985",
+        "reported_version": "Conftest: 0.71.1"
+      },
+      {
+        "name": "java",
+        "pinned_version": "25.0.4.1+1",
+        "sha256": "dbb698396d478e7fa2b1e50f4103324b2a99b90569ee27c33f2261f9215cf41e",
+        "reported_version": "openjdk version \"25.0.4.1\" 2026-08-18 LTS"
+      },
+      {
+        "name": "maven",
+        "pinned_version": "3.9.16",
+        "sha256": "5af3b743dd8b876b5c45da33b676251e5f1687712644abb4ee519ca56e1d89ce",
+        "reported_version": "Apache Maven 3.9.16 (2bdd9fddda4b155ebf8000e807eb73fd829a51d5)"
+      },
+      {
+        "name": "python",
+        "pinned_version": null,
+        "sha256": null,
+        "reported_version": "3.12.3"
+      },
+      {
+        "name": "git",
+        "pinned_version": null,
+        "sha256": null,
+        "reported_version": "git version 2.55.0"
+      },
+      {
+        "name": "docker",
+        "pinned_version": null,
+        "sha256": null,
+        "reported_version": "28.0.4 28.0.4"
+      },
+      {
+        "name": "buildx",
+        "pinned_version": null,
+        "sha256": null,
+        "reported_version": "github.com/docker/buildx v0.38.0 0dbe87f36ed472fe36b6796c3f70b4210a731fc5"
+      }
+    ],
+    "actions": [
+      {
+        "name": "actions/checkout",
+        "version": "v7.0.1",
+        "sha": "3d3c42e5aac5ba805825da76410c181273ba90b1"
+      },
+      {
+        "name": "actions/upload-artifact",
+        "version": "v7.0.2",
+        "sha": "cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+      },
+      {
+        "name": "actions/cache",
+        "version": "v6.1.0",
+        "sha": "55cc8345863c7cc4c66a329aec7e433d2d1c52a9"
+      },
+      {
+        "name": "actions/attest",
+        "version": "v4.2.2",
+        "sha": "1e69f48acb82d1966a394da916b4c1698aa569d6"
+      }
+    ],
+    "base_image": {
+      "name": "ghcr.io/vermout94/mcs-pipeline/base/eclipse-temurin",
+      "digest": "sha256:d9a39a23634650173f1e2bbc176227af9728587ecf0f4b62d53e9355cd7a19ab"
+    },
+    "image": {
+      "name": "ghcr.io/vermout94/mcs-pipeline/petclinic",
+      "tag": "pilot-hosted-2026-10-15-0003",
+      "digest": "sha256:9762f8c1991ac4336b2963ad6b4d83a8b7f0aed22fe7913596baad0488c2343b",
+      "label_correlation_id": "pilot-hosted-2026-10-15-0003"
+    },
+    "caches": {
+      "maven_repository": {
+        "cache_name": "mcs-m2-petclinic-500158f-1",
+        "expected_sha256": "50cff19ee89c7fc520aa9047f24ea44853153515d78d8bfde757bdeb1cf99ab3",
+        "after_restore_sha256": "50cff19ee89c7fc520aa9047f24ea44853153515d78d8bfde757bdeb1cf99ab3",
+        "after_run_sha256": "50cff19ee89c7fc520aa9047f24ea44853153515d78d8bfde757bdeb1cf99ab3",
+        "files": 2174,
+        "bytes": 209659639
+      },
+      "grype_db": null,
+      "docker_build_cache": "none"
+    }
+  },
+  "timing": {
+    "preparation": [
+      {
+        "name": "jdk",
+        "start_monotonic_ns": 23847246678,
+        "end_monotonic_ns": 26079781743,
+        "start_wall": "2026-10-15T19:57:16.343673711Z",
+        "end_wall": "2026-10-15T19:57:18.576209397Z",
+        "exit_code": 0,
+        "network": true
+      },
+      {
+        "name": "maven-distribution",
+        "start_monotonic_ns": 26121604461,
+        "end_monotonic_ns": 26445399099,
+        "start_wall": "2026-10-15T19:57:18.618031444Z",
+        "end_wall": "2026-10-15T19:57:18.941826803Z",
+        "exit_code": 0,
+        "network": true
+      },
+      {
+        "name": "tool.cosign",
+        "start_monotonic_ns": 26490950381,
+        "end_monotonic_ns": 27357769128,
+        "start_wall": "2026-10-15T19:57:18.987377494Z",
+        "end_wall": "2026-10-15T19:57:19.854196582Z",
+        "exit_code": 0,
+        "network": true
+      },
+      {
+        "name": "tool.syft",
+        "start_monotonic_ns": 27463316876,
+        "end_monotonic_ns": 28404876440,
+        "start_wall": "2026-10-15T19:57:19.959743888Z",
+        "end_wall": "2026-10-15T19:57:20.901304444Z",
+        "exit_code": 0,
+        "network": true
+      },
+      {
+        "name": "tool.grype",
+        "start_monotonic_ns": 28627708761,
+        "end_monotonic_ns": 29479541964,
+        "start_wall": "2026-10-15T19:57:21.124135783Z",
+        "end_wall": "2026-10-15T19:57:21.975969617Z",
+        "exit_code": 0,
+        "network": true
+      },
+      {
+        "name": "tool.opa",
+        "start_monotonic_ns": 29666410320,
+        "end_monotonic_ns": 30210374103,
+        "start_wall": "2026-10-15T19:57:22.162837283Z",
+        "end_wall": "2026-10-15T19:57:22.706801637Z",
+        "exit_code": 0,
+        "network": true
+      },
+      {
+        "name": "tool.conftest",
+        "start_monotonic_ns": 30246931743,
+        "end_monotonic_ns": 30966680179,
+        "start_wall": "2026-10-15T19:57:22.743358626Z",
+        "end_wall": "2026-10-15T19:57:23.463107902Z",
+        "exit_code": 0,
+        "network": true
+      },
+      {
+        "name": "maven-repository.restore",
+        "start_monotonic_ns": 31101453123,
+        "end_monotonic_ns": 33956149449,
+        "start_wall": "2026-10-15T19:57:23.597880326Z",
+        "end_wall": "2026-10-15T19:57:26.452576432Z",
+        "exit_code": 0,
+        "network": true
+      },
+      {
+        "name": "maven-repository.hash",
+        "start_monotonic_ns": 33978730007,
+        "end_monotonic_ns": 34200134298,
+        "start_wall": "2026-10-15T19:57:26.475156879Z",
+        "end_wall": "2026-10-15T19:57:26.696561611Z",
+        "exit_code": 0,
+        "network": false
+      },
+      {
+        "name": "base-image.pull",
+        "start_monotonic_ns": 34448239030,
+        "end_monotonic_ns": 46142340130,
+        "start_wall": "2026-10-15T19:57:26.944666133Z",
+        "end_wall": "2026-10-15T19:57:38.638767714Z",
+        "exit_code": 0,
+        "network": true
+      },
+      {
+        "name": "registry-login",
+        "start_monotonic_ns": 68550999997,
+        "end_monotonic_ns": 69160618263,
+        "start_wall": "2026-10-15T19:58:01.047460109Z",
+        "end_wall": "2026-10-15T19:58:01.657045847Z",
+        "exit_code": 0,
+        "network": true
+      }
+    ],
+    "stages": [
+      {
+        "name": "checkout",
+        "enabled": true,
+        "interval": {
+          "name": "checkout",
+          "start_monotonic_ns": 22683838013,
+          "end_monotonic_ns": 23785392489,
+          "start_wall": "2026-10-15T19:57:15.180265076Z",
+          "end_wall": "2026-10-15T19:57:16.281819512Z",
+          "exit_code": 0,
+          "network": true
+        },
+        "subtimes": []
+      },
+      {
+        "name": "build",
+        "enabled": true,
+        "interval": {
+          "name": "build",
+          "start_monotonic_ns": 46184219958,
+          "end_monotonic_ns": 53569920320,
+          "start_wall": "2026-10-15T19:57:38.680647172Z",
+          "end_wall": "2026-10-15T19:57:46.066348084Z",
+          "exit_code": 0,
+          "network": false
+        },
+        "subtimes": [
+          {
+            "name": "build.maven",
+            "start_monotonic_ns": 46184219958,
+            "end_monotonic_ns": 51604257428,
+            "start_wall": "2026-10-15T19:57:38.680647172Z",
+            "end_wall": "2026-10-15T19:57:44.100685092Z",
+            "exit_code": 0,
+            "network": false
+          },
+          {
+            "name": "build.image",
+            "start_monotonic_ns": 51633558744,
+            "end_monotonic_ns": 53569920320,
+            "start_wall": "2026-10-15T19:57:44.129985937Z",
+            "end_wall": "2026-10-15T19:57:46.066348084Z",
+            "exit_code": 0,
+            "network": false
+          }
+        ]
+      },
+      {
+        "name": "test",
+        "enabled": true,
+        "interval": {
+          "name": "test",
+          "start_monotonic_ns": 53616592318,
+          "end_monotonic_ns": 68485157677,
+          "start_wall": "2026-10-15T19:57:46.113019451Z",
+          "end_wall": "2026-10-15T19:58:00.981585321Z",
+          "exit_code": 0,
+          "network": false
+        },
+        "subtimes": []
+      },
+      {
+        "name": "push",
+        "enabled": true,
+        "interval": {
+          "name": "push",
+          "start_monotonic_ns": 69200268246,
+          "end_monotonic_ns": 76052939746,
+          "start_wall": "2026-10-15T19:58:01.696695269Z",
+          "end_wall": "2026-10-15T19:58:08.549367570Z",
+          "exit_code": 0,
+          "network": true
+        },
+        "subtimes": []
+      },
+      {
+        "name": "sbom",
+        "enabled": false,
+        "interval": null,
+        "subtimes": []
+      },
+      {
+        "name": "sign",
+        "enabled": false,
+        "interval": null,
+        "subtimes": []
+      },
+      {
+        "name": "provenance",
+        "enabled": false,
+        "interval": null,
+        "subtimes": []
+      },
+      {
+        "name": "gate",
+        "enabled": false,
+        "interval": null,
+        "subtimes": []
+      }
+    ],
+    "totals": {
+      "stages_sum_ns": 30208491697,
+      "span_ns": 53369101733
+    },
+    "run_api": {
+      "created_at": "2026-10-15T19:57:07Z",
+      "run_started_at": "2026-10-15T19:57:07Z",
+      "updated_at": "2026-10-15T19:58:13Z"
+    },
+    "job_api": {
+      "id": 116639418018,
+      "created_at": "2026-10-15T19:57:09Z",
+      "started_at": "2026-10-15T19:57:11Z",
+      "completed_at": "2026-10-15T19:58:13Z",
+      "queue_s": 2.0,
+      "duration_s": 62.0
+    },
+    "steps_api": [
+      {
+        "number": 1,
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:12Z",
+        "completed_at": "2026-10-15T19:57:15Z"
+      },
+      {
+        "number": 2,
+        "name": "Check inputs",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:15Z",
+        "completed_at": "2026-10-15T19:57:15Z"
+      },
+      {
+        "number": 3,
+        "name": "Stage checkout: start mark",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:15Z",
+        "completed_at": "2026-10-15T19:57:15Z"
+      },
+      {
+        "number": 4,
+        "name": "Stage checkout",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:15Z",
+        "completed_at": "2026-10-15T19:57:16Z"
+      },
+      {
+        "number": 5,
+        "name": "Stage checkout: end mark",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:16Z",
+        "completed_at": "2026-10-15T19:57:16Z"
+      },
+      {
+        "number": 6,
+        "name": "Prepare: read pins",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:16Z",
+        "completed_at": "2026-10-15T19:57:16Z"
+      },
+      {
+        "number": 7,
+        "name": "Prepare: JDK",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:16Z",
+        "completed_at": "2026-10-15T19:57:18Z"
+      },
+      {
+        "number": 8,
+        "name": "Prepare: Maven distribution",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:18Z",
+        "completed_at": "2026-10-15T19:57:18Z"
+      },
+      {
+        "number": 9,
+        "name": "Prepare: cosign",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:18Z",
+        "completed_at": "2026-10-15T19:57:19Z"
+      },
+      {
+        "number": 10,
+        "name": "Prepare: syft",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:19Z",
+        "completed_at": "2026-10-15T19:57:20Z"
+      },
+      {
+        "number": 11,
+        "name": "Prepare: grype",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:20Z",
+        "completed_at": "2026-10-15T19:57:21Z"
+      },
+      {
+        "number": 12,
+        "name": "Prepare: opa",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:21Z",
+        "completed_at": "2026-10-15T19:57:22Z"
+      },
+      {
+        "number": 13,
+        "name": "Prepare: conftest",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:22Z",
+        "completed_at": "2026-10-15T19:57:23Z"
+      },
+      {
+        "number": 14,
+        "name": "Prepare: Maven repository, start mark",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:23Z",
+        "completed_at": "2026-10-15T19:57:23Z"
+      },
+      {
+        "number": 15,
+        "name": "Prepare: Maven repository",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:23Z",
+        "completed_at": "2026-10-15T19:57:26Z"
+      },
+      {
+        "number": 16,
+        "name": "Prepare: Maven repository, end mark and hash",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:26Z",
+        "completed_at": "2026-10-15T19:57:26Z"
+      },
+      {
+        "number": 17,
+        "name": "Prepare: base image",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:26Z",
+        "completed_at": "2026-10-15T19:57:38Z"
+      },
+      {
+        "number": 18,
+        "name": "Stage build",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:38Z",
+        "completed_at": "2026-10-15T19:57:46Z"
+      },
+      {
+        "number": 19,
+        "name": "Stage test",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:57:46Z",
+        "completed_at": "2026-10-15T19:58:01Z"
+      },
+      {
+        "number": 20,
+        "name": "Prepare: registry login",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:58:01Z",
+        "completed_at": "2026-10-15T19:58:01Z"
+      },
+      {
+        "number": 21,
+        "name": "Stage push",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:58:01Z",
+        "completed_at": "2026-10-15T19:58:08Z"
+      },
+      {
+        "number": 22,
+        "name": "Stage sign",
+        "status": "completed",
+        "conclusion": "skipped",
+        "started_at": "2026-10-15T19:58:08Z",
+        "completed_at": "2026-10-15T19:58:08Z"
+      },
+      {
+        "number": 23,
+        "name": "Collect: environment and timing",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:58:08Z",
+        "completed_at": "2026-10-15T19:58:09Z"
+      },
+      {
+        "number": 24,
+        "name": "Collect: upload",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:58:09Z",
+        "completed_at": "2026-10-15T19:58:10Z"
+      },
+      {
+        "number": 48,
+        "name": "Post Stage checkout",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:58:10Z",
+        "completed_at": "2026-10-15T19:58:10Z"
+      },
+      {
+        "number": 49,
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-15T19:58:10Z",
+        "completed_at": "2026-10-15T19:58:10Z"
+      }
+    ]
+  },
+  "checks": {
+    "maven": {
+      "build_maven": {
+        "download_lines": 0,
+        "build_success": true,
+        "offline_skip_lines": 1
+      },
+      "test": {
+        "download_lines": 0,
+        "build_success": true,
+        "offline_skip_lines": 1
+      }
+    },
+    "maven_repository_unchanged": true,
+    "buildkit": {
+      "auth_vertices": [],
+      "from_lines": [
+        "#2 [internal] load metadata for ghcr.io/vermout94/mcs-pipeline/base/eclipse-temurin@sha256:d9a39a23634650173f1e2bbc176227af9728587ecf0f4b62d53e9355cd7a19ab",
+        "#2 DONE 0.0s",
+        "#3 [1/2] FROM ghcr.io/vermout94/mcs-pipeline/base/eclipse-temurin@sha256:d9a39a23634650173f1e2bbc176227af9728587ecf0f4b62d53e9355cd7a19ab",
+        "#3 DONE 0.0s"
+      ],
+      "warnings": []
+    },
+    "push": {
+      "pushed_layers": 1,
+      "existing_layers": 5,
+      "mounted_layers": 0
+    },
+    "tests": {
+      "report_files": 16,
+      "classes_run": 19,
+      "tests": 77,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "image_label_matches": true,
+    "oidc_variables_in_job": {
+      "ACTIONS_ID_TOKEN_REQUEST_URL": true,
+      "ACTIONS_ID_TOKEN_REQUEST_TOKEN": true
+    },
+    "divergences": []
+  },
+  "outcome": {
+    "status": "completed",
+    "conclusion": "success",
+    "failed_step": null,
+    "failed_interval": null,
+    "failed_stage": null,
+    "failure_class": null,
+    "failure_rule": "R01",
+    "failure_evidence": null,
+    "gate": {
+      "result": "not_run",
+      "expected": null,
+      "checks": []
+    }
+  },
+  "orchestrator": {
+    "version": "0.1.0",
+    "classifier_version": 1,
+    "commit": "e6a451ac96fca61caa7de00ebe1ef8d068671137",
+    "dirty": false,
+    "python": "3.13.7",
+    "written_at": "2026-10-15T19:58:23.296111Z"
+  },
+  "null_reasons": {
+    "/design/ground_truth_variant": "unchanged application, no seeded violation (RQ3)",
+    "/design/slsa_configuration": "mapping of the configurations to SLSA levels not fixed yet (RQ4)",
+    "/environment/vm": "hosted runner, no job VM",
+    "/outcome/failed_interval": "the run succeeded (R01)",
+    "/outcome/failed_stage": "the run succeeded (R01)",
+    "/outcome/failed_step": "the run succeeded (R01)",
+    "/outcome/failure_class": "the run succeeded (R01)",
+    "/outcome/failure_evidence": "the run succeeded (R01)",
+    "/outcome/gate/expected": "factor D off, no gate decision expected",
+    "/run/job_log": "the run succeeded, the job log is only kept for runs that did not succeed",
+    "/timing/stages/4/interval": "stage disabled in this configuration",
+    "/timing/stages/5/interval": "stage disabled in this configuration",
+    "/timing/stages/6/interval": "stage disabled in this configuration",
+    "/timing/stages/7/interval": "stage disabled in this configuration",
+    "/versions/caches/grype_db": "factor A not implemented yet, no Grype database",
+    "/versions/tools/10": "tool of the runner image, not pinned in tools/versions.json",
+    "/versions/tools/7": "tool of the runner image, not pinned in tools/versions.json",
+    "/versions/tools/8": "tool of the runner image, not pinned in tools/versions.json",
+    "/versions/tools/9": "tool of the runner image, not pinned in tools/versions.json"
+  }
+}

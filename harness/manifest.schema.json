@@ -1,0 +1,959 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/vermout94/mcs-pipeline/harness/manifest.schema.json",
+  "title": "Run manifest",
+  "description": "One manifest per planned run of a campaign. The orchestrator (harness/) writes it after the run has finished, from the dispatch response, the REST API (workflow run, jobs, artifacts) and the artifact measure-<correlation ID> of the measurement workflow (timing.json, environment.json). Raw data, never edited afterwards. Every null value has an entry in null_reasons, at its own JSON pointer or at the pointer of an enclosing object or array.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "campaign", "run", "design", "environment", "clock", "versions", "timing", "checks", "outcome", "orchestrator", "null_reasons"],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "campaign": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "plan_sha256", "order_sha256", "seed", "repo_commit"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(campaign|pilot-hosted|pilot-metal|dryrun)(-[0-9]{4}-[0-9]{2}-[0-9]{2})?$"
+        },
+        "kind": {
+          "enum": ["campaign", "pilot", "dryrun"]
+        },
+        "plan_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "SHA-256 of plan.yaml of the campaign."
+        },
+        "order_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "SHA-256 of order.json, the run order written before the first run."
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Seed of the randomized block order."
+        },
+        "repo_commit": {
+          "$ref": "#/$defs/git_sha",
+          "description": "Head of the dispatch ref when the order was written. Every run of the campaign must run this commit."
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["correlation_id", "workflow", "ref", "dispatched_at", "dispatch_response", "run_id", "run_attempt", "head_sha", "display_title", "html_url", "matched_by", "artifact", "job_log"],
+      "properties": {
+        "correlation_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{7,63}$",
+          "description": "<campaign>-<position in campaign, four digits>. Same pattern as the input check of measure.yml."
+        },
+        "workflow": {
+          "type": "string",
+          "description": "Workflow file, for example .github/workflows/measure.yml."
+        },
+        "ref": {
+          "type": "string",
+          "description": "Branch the run was dispatched on."
+        },
+        "dispatched_at": {
+          "$ref": "#/$defs/timestamp_or_null",
+          "description": "Clock of the orchestrator (UTC) just before the dispatch request. Null if the run was found by its run name after the orchestrator stopped between dispatch and journal entry."
+        },
+        "dispatch_response": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["workflow_run_id", "run_url", "html_url"],
+          "description": "Body of the response to POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches, REST API version 2026-03-10 (schema \"Workflow Dispatch Response\").",
+          "properties": {
+            "workflow_run_id": {
+              "type": "integer"
+            },
+            "run_url": {
+              "type": "string"
+            },
+            "html_url": {
+              "type": "string"
+            }
+          }
+        },
+        "run_id": {
+          "type": ["integer", "null"]
+        },
+        "run_attempt": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "head_sha": {
+          "$ref": "#/$defs/git_sha_or_null",
+          "description": "Commit the workflow ran from (workflow run, REST API)."
+        },
+        "display_title": {
+          "type": ["string", "null"],
+          "description": "Run name: measure <correlation ID> runner=... sbom=... sign=... provenance=... policy=..."
+        },
+        "html_url": {
+          "type": ["string", "null"]
+        },
+        "matched_by": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": ["dispatch_response", "run_name", "artifact"]
+          },
+          "description": "Ways that assign run_id to the correlation ID: the dispatch response, the run name in the list of workflow runs and the run ID recorded in environment.json. All listed ways agree."
+        },
+        "artifact": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["name", "id", "size_in_bytes", "digest", "sha256", "path", "expires_at"],
+          "description": "Artifact measure-<correlation ID>, stored unchanged as ZIP file.",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "size_in_bytes": {
+              "type": "integer"
+            },
+            "digest": {
+              "type": ["string", "null"],
+              "pattern": "^sha256:[0-9a-f]{64}$",
+              "description": "Digest of the artifact in the REST API."
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256",
+              "description": "SHA-256 of the downloaded ZIP file. Equals digest."
+            },
+            "path": {
+              "type": "string",
+              "description": "Path of the ZIP file relative to the campaign directory."
+            },
+            "expires_at": {
+              "$ref": "#/$defs/timestamp_or_null"
+            }
+          }
+        },
+        "job_log": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["path", "sha256", "bytes"],
+          "description": "Log of the job, downloaded unchanged for runs that did not succeed.",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "bytes": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["configuration", "cell", "factors", "slsa_configuration", "block", "position_in_block", "position_in_campaign", "first_runs", "ground_truth_variant"],
+      "properties": {
+        "configuration": {
+          "type": "string",
+          "description": "Name of the configuration in the plan."
+        },
+        "cell": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15,
+          "description": "Cell of the 2^4 plan: 8 A + 4 B + 2 C + D with A sbom, B sign, C provenance, D policy (1 on, 0 off)."
+        },
+        "factors": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sbom", "sign", "provenance", "policy"],
+          "properties": {
+            "sbom": {
+              "type": "boolean",
+              "description": "Factor A: Syft and Grype."
+            },
+            "sign": {
+              "type": "boolean",
+              "description": "Factor B: cosign keyless."
+            },
+            "provenance": {
+              "type": "boolean",
+              "description": "Factor C: actions/attest."
+            },
+            "policy": {
+              "type": "boolean",
+              "description": "Factor D: OPA and Conftest."
+            }
+          }
+        },
+        "slsa_configuration": {
+          "type": ["string", "null"],
+          "description": "Label of the SLSA configuration (RQ4), null until the mapping is fixed."
+        },
+        "block": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "position_in_block": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "position_in_campaign": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Global index of the run in the planned order, starting at 0."
+        },
+        "first_runs": {
+          "type": "boolean",
+          "description": "True for the runs in the first blocks of the campaign (first_run_blocks in plan.yaml), checked separately in the analysis."
+        },
+        "ground_truth_variant": {
+          "type": ["string", "null"],
+          "description": "RQ3 variant with seeded violation, null for the unchanged application."
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "runner", "cpu", "memory_bytes", "kernel", "kernel_version", "os", "docker", "vm"],
+      "properties": {
+        "type": {
+          "enum": ["hosted", "metal"]
+        },
+        "runner": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version", "os", "arch", "environment", "group", "labels", "image_os", "image_version"],
+          "properties": {
+            "name": {
+              "type": ["string", "null"]
+            },
+            "version": {
+              "type": ["string", "null"],
+              "description": "Version of the Actions runner (Runner.Listener --version in the job)."
+            },
+            "os": {
+              "type": ["string", "null"]
+            },
+            "arch": {
+              "type": ["string", "null"]
+            },
+            "environment": {
+              "type": ["string", "null"],
+              "description": "RUNNER_ENVIRONMENT: github-hosted or self-hosted."
+            },
+            "group": {
+              "type": ["string", "null"],
+              "description": "Runner group (Jobs API)."
+            },
+            "labels": {
+              "type": ["array", "null"],
+              "items": {
+                "type": "string"
+              },
+              "description": "Labels of the job (Jobs API)."
+            },
+            "image_os": {
+              "type": ["string", "null"],
+              "description": "ImageOS on hosted runners, golden image name on metal."
+            },
+            "image_version": {
+              "type": ["string", "null"],
+              "description": "ImageVersion on hosted runners, golden image version on metal."
+            }
+          }
+        },
+        "cpu": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["model", "logical_cores", "affinity_cores", "flags_sha256"],
+          "properties": {
+            "model": {
+              "type": ["string", "null"]
+            },
+            "logical_cores": {
+              "type": ["integer", "null"]
+            },
+            "affinity_cores": {
+              "type": ["integer", "null"],
+              "description": "Cores the job may run on (sched_getaffinity)."
+            },
+            "flags_sha256": {
+              "$ref": "#/$defs/sha256_or_null",
+              "description": "Hash of the sorted CPU flag list, detects changes of the host type."
+            }
+          }
+        },
+        "memory_bytes": {
+          "type": ["integer", "null"]
+        },
+        "kernel": {
+          "type": ["string", "null"]
+        },
+        "kernel_version": {
+          "type": ["string", "null"]
+        },
+        "os": {
+          "type": ["string", "null"],
+          "description": "PRETTY_NAME from /etc/os-release."
+        },
+        "docker": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["server_version", "storage_driver", "cgroup_driver", "default_runtime"],
+          "properties": {
+            "server_version": {
+              "type": ["string", "null"]
+            },
+            "storage_driver": {
+              "type": ["string", "null"]
+            },
+            "cgroup_driver": {
+              "type": ["string", "null"]
+            },
+            "default_runtime": {
+              "type": ["string", "null"]
+            }
+          }
+        },
+        "vm": {
+          "type": ["object", "null"],
+          "description": "Only on metal: life cycle of the job VM. Null on hosted runners.",
+          "additionalProperties": false,
+          "required": ["instance_type", "golden_image", "requested_at", "booted_at", "registered_at", "boot_duration_s"],
+          "properties": {
+            "instance_type": {
+              "type": "string"
+            },
+            "golden_image": {
+              "type": "string"
+            },
+            "requested_at": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "booted_at": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "registered_at": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "boot_duration_s": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "clock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage_clock", "stage_clock_resolution_ns", "wall_clock", "clocksource", "api_resolution_s"],
+      "properties": {
+        "stage_clock": {
+          "const": "CLOCK_MONOTONIC"
+        },
+        "stage_clock_resolution_ns": {
+          "type": ["integer", "null"],
+          "description": "clock_getres(CLOCK_MONOTONIC) in the job."
+        },
+        "wall_clock": {
+          "const": "CLOCK_REALTIME"
+        },
+        "clocksource": {
+          "type": ["string", "null"],
+          "description": "Kernel clock source of the job VM."
+        },
+        "api_resolution_s": {
+          "const": 1,
+          "description": "Resolution of the timestamps of the REST API."
+        }
+      }
+    },
+    "versions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["versions_json_sha256", "tools", "actions", "base_image", "image", "caches"],
+      "properties": {
+        "versions_json_sha256": {
+          "$ref": "#/$defs/sha256_or_null",
+          "description": "SHA-256 of tools/versions.json in the job."
+        },
+        "tools": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "pinned_version", "sha256", "reported_version"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "pinned_version": {
+                "type": ["string", "null"],
+                "description": "Version from tools/versions.json. Null for tools of the runner image (Python, Git, Docker, Buildx)."
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256_or_null",
+                "description": "Pinned SHA-256 of the download."
+              },
+              "reported_version": {
+                "type": ["string", "null"],
+                "description": "Output of the version command in the job."
+              }
+            }
+          }
+        },
+        "actions": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "version", "sha"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "sha": {
+                "$ref": "#/$defs/git_sha"
+              }
+            }
+          }
+        },
+        "base_image": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["name", "digest"],
+          "description": "Base image passed to FROM, by digest.",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "digest": {
+              "$ref": "#/$defs/image_digest"
+            }
+          }
+        },
+        "image": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["name", "tag", "digest", "label_correlation_id"],
+          "description": "Image built and pushed by the run. Null if the run stopped before the digest was read.",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            },
+            "digest": {
+              "$ref": "#/$defs/image_digest"
+            },
+            "label_correlation_id": {
+              "type": ["string", "null"],
+              "description": "Value of the label io.github.vermout94.mcs-pipeline.correlation-id."
+            }
+          }
+        },
+        "caches": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["maven_repository", "grype_db", "docker_build_cache"],
+          "properties": {
+            "maven_repository": {
+              "type": ["object", "null"],
+              "additionalProperties": false,
+              "required": ["cache_name", "expected_sha256", "after_restore_sha256", "after_run_sha256", "files", "bytes"],
+              "description": "Maven repository snapshot (tools/m2hash.py).",
+              "properties": {
+                "cache_name": {
+                  "type": ["string", "null"]
+                },
+                "expected_sha256": {
+                  "$ref": "#/$defs/sha256_or_null"
+                },
+                "after_restore_sha256": {
+                  "$ref": "#/$defs/sha256_or_null"
+                },
+                "after_run_sha256": {
+                  "$ref": "#/$defs/sha256_or_null"
+                },
+                "files": {
+                  "type": ["integer", "null"]
+                },
+                "bytes": {
+                  "type": ["integer", "null"]
+                }
+              }
+            },
+            "grype_db": {
+              "type": ["string", "null"],
+              "description": "Build timestamp and checksum of the imported Grype database, null until factor A exists."
+            },
+            "docker_build_cache": {
+              "const": "none"
+            }
+          }
+        }
+      }
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preparation", "stages", "totals", "run_api", "job_api", "steps_api"],
+      "properties": {
+        "preparation": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/$defs/interval"
+          },
+          "description": "Intervals outside the eight stages (timing.json): tool installation, Maven repository restore, base image pull, registry login."
+        },
+        "stages": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/$defs/stage"
+          },
+          "description": "The eight stages in pipeline order (timing.json). A disabled stage has enabled = false and interval = null."
+        },
+        "totals": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["stages_sum_ns", "span_ns"],
+          "properties": {
+            "stages_sum_ns": {
+              "type": ["integer", "null"],
+              "description": "Sum of the enabled stages. Total duration of the run."
+            },
+            "span_ns": {
+              "type": ["integer", "null"],
+              "description": "Start of checkout to end of the last enabled stage."
+            }
+          }
+        },
+        "run_api": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["created_at", "run_started_at", "updated_at"],
+          "description": "Timestamps of the workflow run (REST API, 1 s).",
+          "properties": {
+            "created_at": {
+              "$ref": "#/$defs/timestamp_or_null"
+            },
+            "run_started_at": {
+              "$ref": "#/$defs/timestamp_or_null"
+            },
+            "updated_at": {
+              "$ref": "#/$defs/timestamp_or_null"
+            }
+          }
+        },
+        "job_api": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["id", "created_at", "started_at", "completed_at", "queue_s", "duration_s"],
+          "description": "The job of the run (Jobs API, 1 s). queue_s = started_at - created_at, duration_s = completed_at - started_at.",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "created_at": {
+              "$ref": "#/$defs/timestamp_or_null"
+            },
+            "started_at": {
+              "$ref": "#/$defs/timestamp_or_null"
+            },
+            "completed_at": {
+              "$ref": "#/$defs/timestamp_or_null"
+            },
+            "queue_s": {
+              "type": ["number", "null"]
+            },
+            "duration_s": {
+              "type": ["number", "null"]
+            }
+          }
+        },
+        "steps_api": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["number", "name", "status", "conclusion", "started_at", "completed_at"],
+            "properties": {
+              "number": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "conclusion": {
+                "type": ["string", "null"]
+              },
+              "started_at": {
+                "$ref": "#/$defs/timestamp_or_null"
+              },
+              "completed_at": {
+                "$ref": "#/$defs/timestamp_or_null"
+              }
+            }
+          }
+        }
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maven", "maven_repository_unchanged", "buildkit", "push", "tests", "image_label_matches", "oidc_variables_in_job", "divergences"],
+      "description": "Checks of the run from environment.json and the comparison with the pins.",
+      "properties": {
+        "maven": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["build_maven", "test"],
+          "properties": {
+            "build_maven": {
+              "$ref": "#/$defs/maven_log"
+            },
+            "test": {
+              "$ref": "#/$defs/maven_log"
+            }
+          }
+        },
+        "maven_repository_unchanged": {
+          "type": ["boolean", "null"],
+          "description": "Content hash after the run equals the hash after the restore."
+        },
+        "buildkit": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["auth_vertices", "from_lines", "warnings"],
+          "properties": {
+            "auth_vertices": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "[auth] vertices: BuildKit requested a registry token."
+            },
+            "from_lines": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "warnings": {
+              "type": ["array", "null"],
+              "items": {
+                "type": "string"
+              },
+              "description": "Build check warnings (WARN lines)."
+            }
+          }
+        },
+        "push": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["pushed_layers", "existing_layers", "mounted_layers"],
+          "properties": {
+            "pushed_layers": {
+              "type": "integer"
+            },
+            "existing_layers": {
+              "type": "integer"
+            },
+            "mounted_layers": {
+              "type": "integer"
+            }
+          }
+        },
+        "tests": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["report_files", "classes_run", "tests", "failures", "errors", "skipped"],
+          "properties": {
+            "report_files": {
+              "type": ["integer", "null"],
+              "description": "Surefire report files, one per top-level test class."
+            },
+            "classes_run": {
+              "type": ["integer", "null"],
+              "description": "Test classes listed with Running in test.log, nested classes included."
+            },
+            "tests": {
+              "type": "integer"
+            },
+            "failures": {
+              "type": "integer"
+            },
+            "errors": {
+              "type": "integer"
+            },
+            "skipped": {
+              "type": "integer"
+            }
+          }
+        },
+        "image_label_matches": {
+          "type": ["boolean", "null"]
+        },
+        "oidc_variables_in_job": {
+          "type": ["object", "null"],
+          "description": "Presence of ACTIONS_ID_TOKEN_REQUEST_URL and ACTIONS_ID_TOKEN_REQUEST_TOKEN in the job, never the values.",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "divergences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Differences between the run and the pins found by the orchestrator, for example a reported tool version, a content hash or the commit. Empty if none."
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "conclusion", "failed_step", "failed_interval", "failed_stage", "failure_class", "failure_rule", "failure_evidence", "gate"],
+      "properties": {
+        "status": {
+          "type": ["string", "null"],
+          "description": "Status of the workflow run."
+        },
+        "conclusion": {
+          "type": ["string", "null"],
+          "description": "Conclusion of the workflow run."
+        },
+        "failed_step": {
+          "type": ["string", "null"],
+          "description": "First step of the job with conclusion failure (Jobs API)."
+        },
+        "failed_interval": {
+          "type": ["string", "null"],
+          "description": "First interval in timing.json with an exit code other than 0."
+        },
+        "failed_stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/stage_name"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "failure_class": {
+          "enum": [null, "gate", "test", "tool", "tool_divergence", "network", "infrastructure", "timeout", "cancelled", "unknown"],
+          "description": "RQ2. Null for successful runs. Rules in docs/measurement.md and harness/mcs_harness/classify.py."
+        },
+        "failure_rule": {
+          "type": ["string", "null"],
+          "pattern": "^R[0-9]{2}$",
+          "description": "Id of the classification rule that matched."
+        },
+        "failure_evidence": {
+          "type": ["string", "null"],
+          "description": "Condition or log line that matched the rule."
+        },
+        "gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["result", "expected", "checks"],
+          "properties": {
+            "result": {
+              "enum": ["pass", "fail", "not_run"]
+            },
+            "expected": {
+              "enum": ["pass", "fail", null],
+              "description": "From the ground truth (RQ3), null for the unchanged application without expectation."
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "result"],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "result": {
+                    "enum": ["pass", "fail", "error", "skipped"]
+                  },
+                  "message": {
+                    "type": ["string", "null"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "orchestrator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "classifier_version", "commit", "dirty", "python", "written_at"],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "classifier_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "commit": {
+          "$ref": "#/$defs/git_sha_or_null",
+          "description": "Local commit of mcs-pipeline the orchestrator ran from."
+        },
+        "dirty": {
+          "type": ["boolean", "null"],
+          "description": "True if harness/ had uncommitted changes."
+        },
+        "python": {
+          "type": "string"
+        },
+        "written_at": {
+          "$ref": "#/$defs/timestamp"
+        }
+      }
+    },
+    "null_reasons": {
+      "type": "object",
+      "description": "JSON pointer of a null value, or of an object or array that contains it, mapped to the reason.",
+      "propertyNames": {
+        "pattern": "^(/[^/]+)+$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sha256_or_null": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "git_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "git_sha_or_null": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "image_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "timestamp_or_null": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "stage_name": {
+      "enum": ["checkout", "build", "test", "push", "sbom", "sign", "provenance", "gate"]
+    },
+    "maven_log": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["download_lines", "build_success", "offline_skip_lines"],
+      "properties": {
+        "download_lines": {
+          "type": "integer",
+          "description": "Lines Downloading from and Downloaded from. 0 in an offline build."
+        },
+        "build_success": {
+          "type": "boolean"
+        },
+        "offline_skip_lines": {
+          "type": "integer"
+        }
+      }
+    },
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "start_monotonic_ns", "end_monotonic_ns", "start_wall", "end_wall", "exit_code", "network"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "start_monotonic_ns": {
+          "type": ["integer", "null"]
+        },
+        "end_monotonic_ns": {
+          "type": ["integer", "null"]
+        },
+        "start_wall": {
+          "$ref": "#/$defs/timestamp_or_null"
+        },
+        "end_wall": {
+          "$ref": "#/$defs/timestamp_or_null"
+        },
+        "exit_code": {
+          "type": ["integer", "null"]
+        },
+        "network": {
+          "type": "boolean",
+          "description": "True if the interval contacts a remote service."
+        }
+      }
+    },
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "enabled", "interval", "subtimes"],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/stage_name"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/interval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subtimes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/interval"
+          }
+        }
+      }
+    }
+  }
+}

@@ -338,10 +338,28 @@ def maven_logs():
 
 
 def test_results():
+    """Test counts from the Surefire reports and the number of test classes from test.log.
+
+    Surefire writes one report file per top-level test class. Nested test classes
+    (JUnit @Nested) report into the file of their outer class, so report_files is
+    smaller than the number of classes that Maven lists with "Running".
+    """
     files = sorted(glob.glob(os.path.join(REPO, "app", "target", "surefire-reports", "TEST-*.xml")))
     if not files:
         return note("/tests", "no surefire reports")
-    totals = {"classes": len(files), "tests": 0, "failures": 0, "errors": 0, "skipped": 0}
+    log = read(os.path.join(OUT, "test.log"))
+    if log is None:
+        classes_run = note("/tests/classes_run", "test.log missing")
+    else:
+        classes_run = len(set(re.findall(r"^\[INFO\] Running (\S+)$", log, re.M)))
+    totals = {
+        "report_files": len(files),
+        "classes_run": classes_run,
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+    }
     for path in files:
         try:
             root = ET.parse(path).getroot()
@@ -370,24 +388,27 @@ def maven_repository(pins):
 
 
 def buildkit_log():
-    """Lines of the BuildKit plain log that show how FROM was resolved."""
+    """Lines of the BuildKit plain log that show how FROM was resolved, and its warnings."""
     text = read(os.path.join(OUT, "build-image.log"))
     if text is None:
         return note("/buildkit", "build-image.log missing")
     names = {}
     lines = []
+    warnings = []
     for line in text.splitlines():
         match = re.match(r"^#(\d+) (.*)$", line)
         if not match:
             continue
         vertex, rest = match.groups()
+        if rest.startswith("WARN: "):
+            warnings.append(rest[len("WARN: "):])
         if vertex not in names:
             names[vertex] = rest
         name = names[vertex]
         if "load metadata for" in name or name.startswith("[auth]") or "FROM" in name:
             lines.append(line)
     auth = sorted({names[v] for v in names if names[v].startswith("[auth]")})
-    return {"auth_vertices": auth, "from_lines": lines}
+    return {"auth_vertices": auth, "from_lines": lines, "warnings": warnings}
 
 
 def push_log():

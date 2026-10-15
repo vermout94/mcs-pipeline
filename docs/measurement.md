@@ -33,7 +33,7 @@ A run is one job. The eight stages run in this order. Stages 1 to 4 form the bas
 
 All steps after `push` refer to the image by its digest. The parameters of the Maven invocations and their evidence are listed in [`app/UPSTREAM.md`](../app/UPSTREAM.md).
 
-`build.image` runs `docker buildx build --progress=plain --provenance=false --sbom=false --load` with the build context `app/target`. [`docker/Dockerfile.dockerignore`](../docker/Dockerfile.dockerignore) reduces the context to the application JAR. The Dockerfile has no `RUN` instruction and no syntax directive, so the build runs no code and uses the frontend built into BuildKit. The image runs as uid 1000, the user `ubuntu` of the base image. The base image comes in as a build argument, `ghcr.io/vermout94/mcs-pipeline/base/eclipse-temurin@<index digest>` from `tools/versions.json`.
+`build.image` runs `docker buildx build --progress=plain --provenance=false --sbom=false --load` with the build context `app/target`. [`docker/Dockerfile.dockerignore`](../docker/Dockerfile.dockerignore) reduces the context to the application JAR. The Dockerfile has no `RUN` instruction and no syntax directive, so the build runs no code and uses the frontend built into BuildKit. The image runs as uid 1000, the user `ubuntu` of the base image. The base image comes in as a build argument, `ghcr.io/vermout94/mcs-pipeline/base/eclipse-temurin@<index digest>` from `tools/versions.json`. `ARG BASE_IMAGE` has the same reference as its default value, so `FROM` is valid without build arguments and BuildKit raises no `InvalidDefaultArgInFrom` warning (Docker documentation, build check `InvalidDefaultArgInFrom`). [`tools/check_workflows.py`](../tools/check_workflows.py) checks that the default equals the mirror name and digest in `tools/versions.json`.
 
 In `sign`, `cosign initialize` writes the TUF metadata of the Sigstore public instance to `$HOME/.sigstore/root`. The step stops before the stage if that directory exists, so the TUF metadata never comes from an earlier run. `cosign sign` takes the OIDC token of the job (`--oidc-provider github-actions`) and, with `--use-signing-config` at its default `true` in cosign v3.1.3, reads the service URLs from the signing config in the TUF repository (cosign documentation, `cosign_sign.md` at v3.1.3).
 
@@ -83,9 +83,10 @@ The last two steps run after every outcome once the checkout succeeded (`if: alw
 - image name, tag, digest and the value of the correlation ID label,
 - the push log counts of pushed, existing and mounted layers,
 - the lines of the BuildKit log that show how `FROM` was resolved: the vertex `load metadata for <base image>` with its duration and any `[auth]` vertex, which BuildKit prints when it requests a registry token,
+- the build check warnings of BuildKit (`WARN` lines),
 - per Maven log the number of `Downloading from` and `Downloaded from` lines,
 - the content hash of the Maven repository after the restore and after the run,
-- test counts from the Surefire reports.
+- test counts from the Surefire reports, the number of report files (`report_files`) and the number of test classes that `test.log` lists with `Running` (`classes_run`). Surefire writes one report file per top-level test class, and nested test classes report into the file of their outer class, so `report_files` is smaller than `classes_run`.
 
 A value that cannot be read is `null`, and `null_reasons` names the reason.
 
@@ -145,11 +146,44 @@ The stage design of September 2026 (slide 14 of the first supervision meeting) o
 
 The gate therefore decides after the image is published. It sets the result of the run, which in a production pipeline would decide whether the digest is promoted or deployed.
 
+## Test runs of 2026-10-14
+
+Two runs of `measure.yml` at commit `9a5b274` on GitHub hosted runners checked the workflow before the orchestrator existed. They were dispatched with `gh workflow run`, one with factor B off and one with factor B on. They are functional checks and not part of a campaign.
+
+| | Run 38638771781 | Run 38638959857 |
+|---|---|---|
+| Correlation ID | `p2-test-20261014-nosign` | `p2-test-20261014-sign` |
+| `sign` | `false` | `true` |
+| Conclusion | success | success |
+| Runner image (`ImageOS`, `ImageVersion`) | `ubuntu24`, 20261004.327.1 | `ubuntu24`, 20261012.334.1 |
+| Runner, Buildx | 2.337.0, v0.37.2 | 2.337.0, v0.38.0 |
+| CPU, logical cores | AMD EPYC 9V45, 4 | AMD EPYC 9V45, 4 |
+| `checkout` (s) | 0.923 | 0.941 |
+| `build` (s), `build.maven`, `build.image` | 8.051, 5.696, 2.329 | 7.374, 5.062, 2.287 |
+| `test` (s) | 14.946 | 13.914 |
+| `push` (s) | 7.062 | 6.130 |
+| `sign` (s), `sign.tuf`, `sign.sign` | | 5.909, 0.653, 5.232 |
+| Sum of the stages (s) | 30.983 | 34.268 |
+| Job in the Jobs API (s) | 57 | 62 |
+| Layers in `push` | 5 mounted from the mirror, 1 pushed | 5 already in the repository, 1 pushed |
+
+Image digests: `sha256:4e2eab7781aa9c3dcc538d9cbda9a248f0ec1c0286e8f56e607768a7e88757db` without signature and `sha256:3018fcb39a27c0a0f1038a5e40de9d22cd6f1808553ddbd00a5d7928b789e389` with signature. Before these runs, run 38638230439 of `mirror-base-image.yml` created the mirror and run 38638400713 of `seed-maven-repository.yml` the Maven repository snapshot (both in `tools/versions.json`).
+
+Results:
+
+- The two runs have different image digests. In both images the correlation ID label carries the correlation ID of the run.
+- BuildKit resolved `FROM` from the local image store. In both runs `load metadata for <base image>` took 0.0 s and the log has no `[auth]` vertex (Docker 28.0.4, storage driver `overlay2`). The containerd image store is not checked.
+- Build and test ran offline. Both Maven logs have no `Downloading from` or `Downloaded from` line, and the content hash of the Maven repository after the run equals the hash in `tools/versions.json`.
+- 77 tests ran without failures. The Surefire reports are 16 files, and `test.log` lists 19 test classes, 3 of them nested.
+- cosign v3.1.3 stored the signature as a Sigstore bundle (`application/vnd.dev.sigstore.bundle.v0.3+json`) in an OCI image index under the tag `sha256-<digest>`, and `cosign tree` lists it as an OCI referrer. `cosign verify` with the certificate identity `https://github.com/vermout94/mcs-pipeline/.github/workflows/measure.yml@refs/heads/main` and the issuer `https://token.actions.githubusercontent.com` accepted the signed digest (exit code 0) and reported "no signatures found" for the unsigned digest (exit code 10).
+- The two runs were created 84 seconds apart and ran on different runner image versions with different Buildx versions. GitHub can change the runner image within a campaign, so the manifest records `ImageVersion` and the tool versions of every run.
+- Both build logs contain the BuildKit warning `InvalidDefaultArgInFrom`, because `ARG BASE_IMAGE` had no default value. The default value described under Stages removes it.
+
 ## Local checks
 
-Before a commit that changes a workflow:
+Before a commit that changes a workflow, the Dockerfile or `tools/versions.json`:
 
 ```bash
-actionlint -shellcheck shellcheck   # actionlint v1.7.12, tools/versions.json dev_tools
+actionlint -shellcheck shellcheck   # actionlint v1.7.12 and shellcheck v0.11.0, tools/versions.json dev_tools
 python3 -I tools/check_workflows.py
 ```

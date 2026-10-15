@@ -5,7 +5,11 @@
 # correlation ID of the run. There is no RUN instruction, so the build runs no
 # code. No syntax directive, so BuildKit uses its built-in frontend and does not
 # pull a frontend image.
-ARG BASE_IMAGE
+#
+# The default of BASE_IMAGE is the same mirror digest, so FROM has a valid
+# reference without build arguments (BuildKit check InvalidDefaultArgInFrom).
+# tools/check_workflows.py checks that it equals tools/versions.json.
+ARG BASE_IMAGE=ghcr.io/vermout94/mcs-pipeline/base/eclipse-temurin@sha256:d9a39a23634650173f1e2bbc176227af9728587ecf0f4b62d53e9355cd7a19ab
 FROM ${BASE_IMAGE}
 
 ARG CORRELATION_ID

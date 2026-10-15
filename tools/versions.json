@@ -80,6 +80,18 @@
         "sha256": "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8"
       },
       "checksum_source": "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_checksums.txt"
+    },
+    "shellcheck": {
+      "version": "v0.11.0",
+      "darwin_amd64": {
+        "url": "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.darwin.x86_64.tar.xz",
+        "sha256": "3c89db4edcab7cf1c27bff178882e0f6f27f7afdf54e859fa041fca10febe4c6"
+      },
+      "linux_amd64": {
+        "url": "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz",
+        "sha256": "8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198"
+      },
+      "checksum_source": "Asset digests of the release in the GitHub REST API (repos/koalaman/shellcheck/releases/tags/v0.11.0). The release has no checksum file."
     }
   },
   "grype_db": {

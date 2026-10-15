@@ -5,7 +5,8 @@ build/
 *.jar
 !.mvn/wrapper/maven-wrapper.jar
 
-# Measurement data: only manifests and aggregated CSV files are versioned.
+# Measurement data: the plan, the order, the journal, the log of the
+# orchestrator, the manifests and the outputs of the analysis are versioned.
 # Dry runs stay local. Artifacts and job logs are raw data of the runs, kept
 # outside Git. Both contain the Maven output with the commit metadata.
 data/dryrun/

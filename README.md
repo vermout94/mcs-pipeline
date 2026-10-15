@@ -6,11 +6,11 @@ The experiment varies the four controls in a full 2^4 factorial design. It measu
 
 This repository is the replication package of the thesis. The thesis refers to tags (`campaign-YYYY-MM-DD`) and commit hashes of this repository.
 
-Status: under construction. The repository contains the application under build, the measurement workflow with the baseline and factor B (signing) for GitHub hosted runners and the orchestrator that runs campaigns of it. The other factors, the AWS environment and the measurement data follow.
+Status: under construction. The repository contains the application under build, the measurement workflow with the baseline and factor B (signing) for GitHub hosted runners, the orchestrator that runs campaigns of it and the analysis of a campaign. The other factors, the AWS environment and the measurement data follow.
 
 ## Measurement design
 
-[`docs/measurement.md`](docs/measurement.md) describes the stages, their boundaries, the preparation outside the stages, the network dependent parts, the run order, the assignment of runs and the failure classes. The workflows are in [`.github/workflows/`](.github/workflows/), the pinned tool versions with SHA-256 in [`tools/versions.json`](tools/versions.json), the orchestrator and the manifest schema in [`harness/`](harness/README.md).
+[`docs/measurement.md`](docs/measurement.md) describes the stages, their boundaries, the preparation outside the stages, the network dependent parts, the run order, the assignment of runs and the failure classes. The workflows are in [`.github/workflows/`](.github/workflows/), the pinned tool versions with SHA-256 in [`tools/versions.json`](tools/versions.json), the orchestrator and the manifest schema in [`harness/`](harness/README.md), the analysis in [`analysis/`](analysis/README.md).
 
 ## Application under build
 

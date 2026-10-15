@@ -134,7 +134,7 @@ Each job runs on a fresh VM, so every run is a cold start inside the job. State 
 - GHCR: the first push of a campaign uploads or mounts the base layers into the repository of the application image, later pushes find them there (`push` details in `environment.json`).
 - The GitHub cache service, the Sigstore TUF CDN and the hosts carry state of their own.
 
-The manifest marks the first runs of each campaign, and the analysis checks the trend over the run number.
+The manifest marks the first runs of each campaign. The analysis computes every table with and without these runs and compares the second half of the blocks with the first half ([`analysis/README.md`](../analysis/README.md)).
 
 ## Deviation from the initial stage order
 
@@ -180,7 +180,7 @@ The pause is 60 s, set in `plan.yaml` and fixed for the whole campaign. On GitHu
 
 ### After each run
 
-The orchestrator reads the workflow run and its job from the REST API (job and step times with 1 s resolution, queue time `started_at - created_at` of the job, status), downloads the artifact `measure-<correlation ID>`, checks its SHA-256 against the digest in the REST API and stores it unchanged under `data/<campaign>/artifacts/`. GitHub deletes the artifact after 90 days. The artifacts stay outside Git (`data/*/artifacts/` in `.gitignore`), because only manifests and aggregated CSV files are versioned and the Maven logs contain the commit metadata that `git-commit-id-maven-plugin` collects. For runs that did not succeed the orchestrator also stores the job log under `data/<campaign>/job-logs/`. It contains the same Maven output and stays outside Git as well (`data/*/job-logs/`). It then writes the manifest, validates it against [`harness/manifest.schema.json`](../harness/manifest.schema.json) and checks that every null value has a reason in `null_reasons`. A manifest that does not validate stops the orchestrator.
+The orchestrator reads the workflow run and its job from the REST API (job and step times with 1 s resolution, queue time `started_at - created_at` of the job, status), downloads the artifact `measure-<correlation ID>`, checks its SHA-256 against the digest in the REST API and stores it unchanged under `data/<campaign>/artifacts/`. GitHub deletes the artifact after 90 days. The artifacts stay outside Git (`data/*/artifacts/` in `.gitignore`), because the Maven logs contain the commit metadata that `git-commit-id-maven-plugin` collects. Git holds the plan (`plan.yaml`), the order (`order.json`), the journal (`journal.jsonl`), the log of the orchestrator (`orchestrator.log`), the manifests and the outputs of the analysis (`analysis/`) of a campaign. For runs that did not succeed the orchestrator also stores the job log under `data/<campaign>/job-logs/`. It contains the same Maven output and stays outside Git as well (`data/*/job-logs/`). It then writes the manifest, validates it against [`harness/manifest.schema.json`](../harness/manifest.schema.json) and checks that every null value has a reason in `null_reasons`. A manifest that does not validate stops the orchestrator.
 
 ### Divergences
 
@@ -247,6 +247,10 @@ Results:
 - cosign v3.1.3 stored the signature as a Sigstore bundle (`application/vnd.dev.sigstore.bundle.v0.3+json`) in an OCI image index under the tag `sha256-<digest>`, and `cosign tree` lists it as an OCI referrer. `cosign verify` with the certificate identity `https://github.com/vermout94/mcs-pipeline/.github/workflows/measure.yml@refs/heads/main` and the issuer `https://token.actions.githubusercontent.com` accepted the signed digest (exit code 0) and reported "no signatures found" for the unsigned digest (exit code 10).
 - The two runs were created 84 seconds apart and ran on different runner image versions with different Buildx versions. GitHub can change the runner image within a campaign, so the manifest records `ImageVersion` and the tool versions of every run.
 - Both build logs contain the BuildKit warning `InvalidDefaultArgInFrom`, because `ARG BASE_IMAGE` had no default value. The default value described under Stages removes it.
+
+## Analysis
+
+[`analysis/`](../analysis/README.md) reads the manifests, `order.json` and `plan.yaml` of a campaign and writes CSV files, LaTeX tables and PDF figures to `data/<campaign>/analysis/`. It names the quantile definition, the exclusion rule, the tests, the bootstrap settings and the commits in its outputs. Interactions of the factors are not analyzed.
 
 ## Local checks
 

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/vermout94/mcs-pipeline/harness/plan.schema.json",
+  "title": "Campaign plan",
+  "description": "data/<campaign>/plan.yaml. The orchestrator derives the run order from it (order.json) before the first run.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["campaign", "repository", "workflow", "ref", "environment", "seed", "runs_per_configuration", "first_run_blocks", "pause_seconds", "poll_seconds", "max_wait_minutes", "stop_after_consecutive_failures", "configurations"],
+  "properties": {
+    "campaign": {
+      "type": "string",
+      "pattern": "^(campaign|pilot-hosted|pilot-metal|dryrun)(-[0-9]{4}-[0-9]{2}-[0-9]{2})?$",
+      "description": "Campaign ID, equal to the name of the directory under data/."
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$"
+    },
+    "workflow": {
+      "const": "measure.yml"
+    },
+    "ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Branch to dispatch on."
+    },
+    "environment": {
+      "enum": ["hosted", "metal"],
+      "description": "Value of the workflow input runner."
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "runs_per_configuration": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of blocks. Each block contains every configuration once."
+    },
+    "first_run_blocks": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Runs in the first N blocks get first_runs = true in the manifest."
+    },
+    "pause_seconds": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Fixed pause between the moment a run is seen as completed and the dispatch of the next run."
+    },
+    "poll_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "description": "Interval of the status requests while a run is queued or in progress."
+    },
+    "max_wait_minutes": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The orchestrator stops if a run is not completed after this time. A restart continues to wait for the same run."
+    },
+    "stop_after_consecutive_failures": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The orchestrator stops after this many runs in a row that did not succeed. 0 disables the stop."
+    },
+    "configurations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "factors"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "factors": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sbom", "sign", "provenance", "policy"],
+            "properties": {
+              "sbom": {
+                "type": "boolean"
+              },
+              "sign": {
+                "type": "boolean"
+              },
+              "provenance": {
+                "type": "boolean"
+              },
+              "policy": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

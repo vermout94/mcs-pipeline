@@ -5,6 +5,11 @@ build/
 *.jar
 !.mvn/wrapper/maven-wrapper.jar
 
+# Measurement data: only manifests and aggregated CSV files are versioned.
+# Dry runs stay local. Artifacts are raw data of the runs, kept outside Git.
+data/dryrun/
+data/*/artifacts/
+
 # Python
 __pycache__/
 *.pyc

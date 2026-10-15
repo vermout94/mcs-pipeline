@@ -1,0 +1,19 @@
+# Plan of a campaign. Copy to data/<campaign>/plan.yaml, the directory name must
+# equal the value of campaign. Schema: harness/plan.schema.json.
+campaign: dryrun
+repository: vermout94/mcs-pipeline
+workflow: measure.yml
+ref: main
+environment: hosted
+seed: 20261015
+runs_per_configuration: 1
+first_run_blocks: 1
+pause_seconds: 60
+poll_seconds: 10
+max_wait_minutes: 60
+stop_after_consecutive_failures: 3
+configurations:
+  - name: baseline
+    factors: {sbom: false, sign: false, provenance: false, policy: false}
+  - name: sign
+    factors: {sbom: false, sign: true, provenance: false, policy: false}

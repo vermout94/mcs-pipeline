@@ -146,6 +146,71 @@ The stage design of September 2026 (slide 14 of the first supervision meeting) o
 
 The gate therefore decides after the image is published. It sets the result of the run, which in a production pipeline would decide whether the digest is promoted or deployed.
 
+## Orchestrator
+
+The orchestrator ([`harness/`](../harness/README.md)) runs a campaign from a plan (`data/<campaign>/plan.yaml`) and stores everything under `data/<campaign>/`. It runs outside GitHub Actions and dispatches the runs strictly one after the other.
+
+### Order
+
+The runs follow a randomized complete block design. Each block contains every configuration of the plan exactly once, in a random order of its own, and the blocks run one after the other. `random.Random(seed)` with `random.shuffle` of Python 3.13.7 draws the order. Seed and order go into `order.json` before the first run, together with the commit of the branch and the SHA-256 of `plan.yaml`. A changed `plan.yaml` stops the orchestrator. The runs of the first `first_run_blocks` blocks get `first_runs = true` in the manifest, so the analysis can check first run effects separately. The manifest also records the block, the position in the block and the position in the campaign.
+
+### Correlation ID
+
+`<campaign>-<position>`, the position in the campaign with four digits starting at `0000`, for example `dryrun-0001`. It matches the input check of `measure.yml` (`^[a-z0-9][a-z0-9-]{7,63}$`). Before the first dispatch the orchestrator looks for runs of the workflow that carry a correlation ID of the campaign and are older than `order.json`, and stops if it finds one.
+
+### Dispatch
+
+`POST /repos/vermout94/mcs-pipeline/actions/workflows/measure.yml/dispatches` with `ref` and `inputs` and the header `X-GitHub-Api-Version: 2026-03-10`. In this version the endpoint answers 200 with `workflow_run_id`, `run_url` and `html_url` (REST reference of version 2026-03-10, schema "Workflow Dispatch Response"). The parameter `return_run_details` no longer exists and is not sent. A dispatch request is never repeated.
+
+### Assignment
+
+Three ways assign a run to a correlation ID, and all of them must agree:
+
+1. `workflow_run_id` in the dispatch response,
+2. the run name: the list of workflow runs must contain exactly one run with the correlation ID, its ID must equal `workflow_run_id`, and its title must equal the title for the planned inputs (`measure <correlation ID> runner=… sbom=… sign=… provenance=… policy=…`),
+3. `environment.json` in the artifact records the run ID and the correlation ID of the job.
+
+The manifest lists the ways in `run.matched_by`. If two ways disagree, the orchestrator stops without manifest. Before each dispatch it looks for a run with the correlation ID of the position. If the orchestrator stopped after a dispatch request and before the journal entry, it collects that run and does not dispatch a second one. The manifest then has no dispatch response, and `null_reasons` says why.
+
+### Waiting and pause
+
+The orchestrator requests the status of the run every `poll_seconds` until the run is completed. Before the next dispatch it waits until `pause_seconds` have passed since it saw the previous run completed, and until no run of the workflow is queued or in progress. The concurrency group of `measure.yml` keeps one waiting run at most, so the next dispatch must come after the previous run.
+
+The pause is 60 s, set in `plan.yaml` and fixed for the whole campaign. On GitHub hosted runners every job gets a new VM, so there the pause only spaces the dispatches. For the own hardware the value will be assessed again after the pilot on that hardware. In the dry run of 2026-10-15 the gap between the completion of the first run and the next dispatch was 62.6 s: the pause and the check for queued runs.
+
+### After each run
+
+The orchestrator reads the workflow run and its job from the REST API (job and step times with 1 s resolution, queue time `started_at - created_at` of the job, status), downloads the artifact `measure-<correlation ID>`, checks its SHA-256 against the digest in the REST API and stores it unchanged under `data/<campaign>/artifacts/`. GitHub deletes the artifact after 90 days. The artifacts stay outside Git (`data/*/artifacts/` in `.gitignore`), because only manifests and aggregated CSV files are versioned and the Maven logs contain the commit metadata that `git-commit-id-maven-plugin` collects. For runs that did not succeed the orchestrator also stores the job log. It then writes the manifest, validates it against [`harness/manifest.schema.json`](../harness/manifest.schema.json) and checks that every null value has a reason in `null_reasons`. A manifest that does not validate stops the orchestrator.
+
+### Divergences
+
+The manifest lists in `checks.divergences` every difference between the run and the pins that the orchestrator finds: another commit than the campaign commit, a reported tool version other than the pinned one, a content hash of the Maven repository other than the pinned one, download lines in an offline Maven log, a correlation ID label other than the correlation ID, factors in `timing.json` other than the planned ones, a re-run. A run with another commit than the campaign commit stops the orchestrator after its manifest is written.
+
+### Stops
+
+The orchestrator never repeats a run. For every campaign except `dryrun` it stops before it dispatches anything if `harness/` has uncommitted changes, so every manifest of a pilot or a campaign names the commit of the orchestrator that wrote it. It stops when a dispatch request fails, when the ways of assignment disagree, when a download does not match its digest, when a manifest does not validate, when a run ran another commit and after `stop_after_consecutive_failures` runs in a row that did not succeed. A restart continues with the first position without manifest and keeps the order.
+
+## Failure classes (RQ2)
+
+Every run gets a failure class and the ID of the rule that set it (`outcome.failure_class`, `outcome.failure_rule`, `outcome.failure_evidence`). The rules are tried in this order, and the first one that matches sets the class. They use the conclusion of the workflow run, the job and its steps from the REST API, `timing.json` and the logs from the artifact, the test counts and, for runs that did not succeed, the job log. Network errors are searched in the log of the failed interval and in the lines of the job log written while the failed step ran.
+
+| Rule | Class | Condition |
+|---|---|---|
+| R01 | none | conclusion `success` |
+| R02 | `cancelled` | conclusion `cancelled` |
+| R03 | `timeout` | conclusion `timed_out` of the run or the job |
+| R04 | `infrastructure` | the job did not start: no job, no runner, no start time, or conclusion `startup_failure` |
+| R05 | `infrastructure` | the job log reports a lost runner, or `~/.m2/repository` or `~/.sigstore` existed before use |
+| R06 | `tool_divergence` | a check of the workflow found a difference to the pins: SHA-256 of a download, content hash of the Maven repository, image digest, mirror digest |
+| R07 | `gate` | the stage `gate` ended with exit code 1 (provisional until factor D exists) |
+| R08 | `test` | the stage `test` failed and the Surefire reports count failures or errors |
+| R09 | `network` | the log contains a network error: name resolution, refused or reset connection, timeout, TLS handshake, HTTP 502, 503, 504 or 429, curl network exit codes |
+| R10 | `tool` | an interval of a stage ended with an exit code other than 0, or started and did not end |
+| R11 | `infrastructure` | a step outside the stage intervals failed: input check, preparation, collect, upload |
+| R12 | `unknown` | no other rule matched |
+
+A failing sub-time names the failed interval, for example `sign.sign` and not `sign`. The patterns of R05, R06 and R09 are in [`harness/mcs_harness/classify.py`](../harness/mcs_harness/classify.py). A change of the rules raises `classifier_version`, which the manifest records. Manifests keep the class of the version that wrote them. A later change of the classification is a documented filter in the analysis.
+
 ## Test runs of 2026-10-14
 
 Two runs of `measure.yml` at commit `9a5b274` on GitHub hosted runners checked the workflow before the orchestrator existed. They were dispatched with `gh workflow run`, one with factor B off and one with factor B on. They are functional checks and not part of a campaign.
